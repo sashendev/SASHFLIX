@@ -11,7 +11,6 @@ import { parseAsInteger, useQueryState } from "nuqs";
 import { useEffect, useMemo } from "react";
 import { MovieDetails } from "tmdb-ts/dist/types/movies";
 import { usePlayerEvents } from "@/hooks/usePlayerEvents";
-const AdsWarning = dynamic(() => import("@/components/ui/overlay/AdsWarning"));
 const MoviePlayerHeader = dynamic(() => import("./Header"));
 const MoviePlayerSourceSelection = dynamic(() => import("./SourceSelection"));
 
@@ -73,7 +72,7 @@ const MoviePlayer: React.FC<MoviePlayerProps> = ({ movie, startAt }) => {
 
   return (
     <>
-      <AdsWarning />
+      {/* AdsWarning removed */}
 
       <div className={cn("relative", SpacingClasses.reset)}>
         <MoviePlayerHeader

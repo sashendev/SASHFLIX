@@ -10,7 +10,6 @@ import { Episode, TvShowDetails } from "tmdb-ts";
 import useBreakpoints from "@/hooks/useBreakpoints";
 import { ADS_WARNING_STORAGE_KEY, SpacingClasses } from "@/utils/constants";
 import { usePlayerEvents } from "@/hooks/usePlayerEvents";
-const AdsWarning = dynamic(() => import("@/components/ui/overlay/AdsWarning"));
 const TvShowPlayerHeader = dynamic(() => import("./Header"));
 const TvShowPlayerSourceSelection = dynamic(() => import("./SourceSelection"));
 const TvShowPlayerEpisodeSelection = dynamic(() => import("./EpisodeSelection"));
@@ -92,7 +91,7 @@ const TvShowPlayer: React.FC<TvShowPlayerProps> = ({
 
   return (
     <>
-      <AdsWarning />
+      {/* AdsWarning removed */}
 
       <div className={cn("relative", SpacingClasses.reset)}>
         <TvShowPlayerHeader
