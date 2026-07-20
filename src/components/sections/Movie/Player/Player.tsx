@@ -8,7 +8,7 @@ import { Card, Skeleton } from "@heroui/react";
 import { useDisclosure, useDocumentTitle, useIdle, useLocalStorage } from "@mantine/hooks";
 import dynamic from "next/dynamic";
 import { parseAsInteger, useQueryState } from "nuqs";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { MovieDetails } from "tmdb-ts/dist/types/movies";
 import { usePlayerEvents } from "@/hooks/usePlayerEvents";
 const AdsWarning = dynamic(() => import("@/components/ui/overlay/AdsWarning"));
@@ -26,7 +26,6 @@ const MoviePlayer: React.FC<MoviePlayerProps> = ({ movie, startAt }) => {
     getInitialValueInEffect: false,
   });
 
-  const players = getMoviePlayers(movie.id, startAt);
   const title = mutateMovieTitle(movie);
   const idle = useIdle(3000);
   const { mobile } = useBreakpoints();
@@ -35,6 +34,37 @@ const MoviePlayer: React.FC<MoviePlayerProps> = ({ movie, startAt }) => {
     "src",
     parseAsInteger.withDefault(0),
   );
+
+  const players = useMemo(() => {
+    const basePlayers = getMoviePlayers(movie.id, startAt);
+    if (typeof window !== "undefined") {
+      return basePlayers.map((player, index) => {
+        if (player.title.startsWith("VidLink")) {
+          const fallbackUrl = `${window.location.origin}/api/player/fallback?nextSource=${index + 1}`;
+          const separator = player.source.includes("?") ? "&" : "?";
+          return {
+            ...player,
+            source: `${player.source}${separator}fallback_url=${encodeURIComponent(fallbackUrl)}` as `https://${string}`,
+          };
+        }
+        return player;
+      });
+    }
+    return basePlayers;
+  }, [movie.id, startAt]);
+
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      if (event.data && event.data.type === "PLAYER_FALLBACK") {
+        const next = event.data.nextSource;
+        if (typeof next === "number" && next < players.length) {
+          setSelectedSource(next);
+        }
+      }
+    };
+    window.addEventListener("message", handleMessage);
+    return () => window.removeEventListener("message", handleMessage);
+  }, [players.length, setSelectedSource]);
 
   usePlayerEvents({ saveHistory: true });
   useDocumentTitle(`Play ${title} | ${siteConfig.name}`);

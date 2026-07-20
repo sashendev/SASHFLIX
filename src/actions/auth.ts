@@ -14,6 +14,7 @@ import {
 } from "@/schemas/auth";
 import { z } from "zod";
 import { ActionResponse } from "@/types";
+import { env } from "@/utils/env";
 
 /**
  * A generic type for our authentication actions.
@@ -44,7 +45,7 @@ const createAuthAction = <T extends { captchaToken?: string }>(
       return { success: false, message };
     }
 
-    if (!result.data.captchaToken) {
+    if (env.NEXT_PUBLIC_CAPTCHA_SITE_KEY && !result.data.captchaToken) {
       return { success: false, message: "Captcha is required." };
     }
 

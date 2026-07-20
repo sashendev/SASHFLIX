@@ -31,7 +31,7 @@ const AuthResetPasswordForm: React.FC = () => {
   });
 
   const onSubmit = handleSubmit(async (data) => {
-    if (isEmpty(data.captchaToken)) {
+    if (env.NEXT_PUBLIC_CAPTCHA_SITE_KEY && isEmpty(data.captchaToken)) {
       setIsVerifying(true);
       return;
     }
@@ -93,7 +93,7 @@ const AuthResetPasswordForm: React.FC = () => {
         placeholder="Confirm your new password"
         startContent={<LockPassword className="text-xl" />}
       />
-      {isVerifying && (
+      {env.NEXT_PUBLIC_CAPTCHA_SITE_KEY && isVerifying && (
         <Turnstile
           className="flex h-fit w-full items-center justify-center"
           siteKey={env.NEXT_PUBLIC_CAPTCHA_SITE_KEY}

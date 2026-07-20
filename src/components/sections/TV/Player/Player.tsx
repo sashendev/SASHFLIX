@@ -5,7 +5,7 @@ import { Card, Skeleton } from "@heroui/react";
 import { useDisclosure, useDocumentTitle, useIdle, useLocalStorage } from "@mantine/hooks";
 import dynamic from "next/dynamic";
 import { parseAsInteger, useQueryState } from "nuqs";
-import { memo, useMemo } from "react";
+import { memo, useEffect, useMemo } from "react";
 import { Episode, TvShowDetails } from "tmdb-ts";
 import useBreakpoints from "@/hooks/useBreakpoints";
 import { ADS_WARNING_STORAGE_KEY, SpacingClasses } from "@/utils/constants";
@@ -41,7 +41,6 @@ const TvShowPlayer: React.FC<TvShowPlayerProps> = ({
   });
 
   const { mobile } = useBreakpoints();
-  const players = getTvShowPlayers(id, episode.season_number, episode.episode_number, startAt);
   const idle = useIdle(3000);
   const [sourceOpened, sourceHandlers] = useDisclosure(false);
   const [episodeOpened, episodeHandlers] = useDisclosure(false);
@@ -49,6 +48,37 @@ const TvShowPlayer: React.FC<TvShowPlayerProps> = ({
     "src",
     parseAsInteger.withDefault(0),
   );
+
+  const players = useMemo(() => {
+    const basePlayers = getTvShowPlayers(id, episode.season_number, episode.episode_number, startAt);
+    if (typeof window !== "undefined") {
+      return basePlayers.map((player, index) => {
+        if (player.title.startsWith("VidLink")) {
+          const fallbackUrl = `${window.location.origin}/api/player/fallback?nextSource=${index + 1}`;
+          const separator = player.source.includes("?") ? "&" : "?";
+          return {
+            ...player,
+            source: `${player.source}${separator}fallback_url=${encodeURIComponent(fallbackUrl)}` as `https://${string}`,
+          };
+        }
+        return player;
+      });
+    }
+    return basePlayers;
+  }, [id, episode.season_number, episode.episode_number, startAt]);
+
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      if (event.data && event.data.type === "PLAYER_FALLBACK") {
+        const next = event.data.nextSource;
+        if (typeof next === "number" && next < players.length) {
+          setSelectedSource(next);
+        }
+      }
+    };
+    window.addEventListener("message", handleMessage);
+    return () => window.removeEventListener("message", handleMessage);
+  }, [players.length, setSelectedSource]);
 
   usePlayerEvents({
     saveHistory: true,
