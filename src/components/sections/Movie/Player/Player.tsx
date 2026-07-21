@@ -20,10 +20,14 @@ interface MoviePlayerProps {
 }
 
 const MoviePlayer: React.FC<MoviePlayerProps> = ({ movie, startAt }) => {
-  const [seen] = useLocalStorage<boolean>({
+  const [seen, setSeen] = useLocalStorage<boolean>({
     key: ADS_WARNING_STORAGE_KEY,
     getInitialValueInEffect: false,
   });
+
+  useEffect(() => {
+    setSeen(true);
+  }, [setSeen]);
 
   const title = mutateMovieTitle(movie);
   const idle = useIdle(3000);
