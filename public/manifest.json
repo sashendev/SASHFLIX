@@ -10,9 +10,9 @@
   "lang": "en-US",
   "icons": [
     {
-      "type": "image/png",
-      "src": "icons/windows/SmallTile.scale-100.png",
-      "sizes": "71x71"
+      "src": "/favicon.ico",
+      "sizes": "64x64",
+      "type": "image/x-icon"
     },
     {
       "type": "image/png",

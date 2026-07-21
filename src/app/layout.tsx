@@ -23,6 +23,7 @@ export const metadata: Metadata = {
   manifest: "/manifest.json",
   icons: {
     icon: siteConfig.favicon,
+    apple: "/favicon.ico",
   },
   twitter: {
     card: "summary",
