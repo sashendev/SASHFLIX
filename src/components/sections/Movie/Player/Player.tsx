@@ -27,6 +27,7 @@ const MoviePlayer: React.FC<MoviePlayerProps> = ({ movie, startAt }) => {
 
   const [isAllFailed, setIsAllFailed] = useState(false);
   const [showAutoSwitchBanner, setShowAutoSwitchBanner] = useState(true);
+  const [serverFound, setServerFound] = useState(false);
   const userInteractedRef = useRef(false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -62,6 +63,9 @@ const MoviePlayer: React.FC<MoviePlayerProps> = ({ movie, startAt }) => {
   }, [movie.id, startAt]);
 
   useEffect(() => {
+    // Stop everything if a working server was already found
+    if (serverFound) return;
+
     // Cancel any existing timeout when source changes
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
@@ -73,8 +77,7 @@ const MoviePlayer: React.FC<MoviePlayerProps> = ({ movie, startAt }) => {
 
     // Start pessimistic timeout: assume failure after 10 seconds
     timeoutRef.current = setTimeout(() => {
-      if (userInteractedRef.current) {
-        console.log("Auto-switch cancelled: User interacted with the player.");
+      if (serverFound || userInteractedRef.current) {
         return;
       }
 
@@ -84,18 +87,21 @@ const MoviePlayer: React.FC<MoviePlayerProps> = ({ movie, startAt }) => {
         setSelectedSource(nextSource);
       } else {
         setIsAllFailed(true);
+        setShowAutoSwitchBanner(false);
       }
-    }, 10000); // Increased to 10 seconds to give players more time to report success
+    }, 10000);
 
     return () => {
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
     };
-  }, [selectedSource, players, setSelectedSource]); // Removed userInteracted from dependencies to prevent resetting the timer on click
+  }, [selectedSource, players, setSelectedSource, serverFound]);
 
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
       // Log messages to help debug which events the players are actually sending
       console.log("Player Message Received:", event.data);
+
+      if (serverFound) return;
 
       if (event.data && event.data.type === "PLAYER_FALLBACK") {
         // Existing fallback logic
@@ -113,7 +119,10 @@ const MoviePlayer: React.FC<MoviePlayerProps> = ({ movie, startAt }) => {
           event.data.state === "playing"
         )
       ) {
-        // SUCCESS: Cancel the timeout so it stops auto-switching
+        // SUCCESS: Stop auto-switching permanently
+        console.log("WORKING SERVER FOUND: Stopping auto-switch.");
+        setServerFound(true);
+        setShowAutoSwitchBanner(false);
         if (timeoutRef.current) {
           clearTimeout(timeoutRef.current);
           timeoutRef.current = null;
@@ -122,7 +131,7 @@ const MoviePlayer: React.FC<MoviePlayerProps> = ({ movie, startAt }) => {
     };
     window.addEventListener("message", handleMessage);
     return () => window.removeEventListener("message", handleMessage);
-  }, [players.length, setSelectedSource]);
+  }, [players.length, setSelectedSource, serverFound]);
 
   usePlayerEvents({ saveHistory: true });
   useDocumentTitle(`Play ${title} | ${siteConfig.name}`);
@@ -145,6 +154,7 @@ const MoviePlayer: React.FC<MoviePlayerProps> = ({ movie, startAt }) => {
           onClickCapture={() => {
             console.log("CLICK DETECTED: Locking player now!");
             userInteractedRef.current = true;
+            setServerFound(true);
             setShowAutoSwitchBanner(false);
           }}
         >
