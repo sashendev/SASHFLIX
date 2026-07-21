@@ -48,7 +48,7 @@ const MoviePlayer: React.FC<MoviePlayerProps> = ({ movie, startAt }) => {
     const basePlayers = getMoviePlayers(movie.id, startAt);
     if (typeof window !== "undefined") {
       return basePlayers.map((player, index) => {
-        if (player.title.startsWith("VidLink")) {
+        if (player.source.includes("vidlink.pro")) {
           const fallbackUrl = `${window.location.origin}/api/player/fallback?nextSource=${index + 1}`;
           const separator = player.source.includes("?") ? "&" : "?";
           return {
