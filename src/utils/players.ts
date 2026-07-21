@@ -130,25 +130,5 @@ export const getTvShowPlayers = (
       source: `https://vidsrc.to/embed/tv/${id}/${season}/${episode}`,
       ads: true,
     },
-    {
-      title: "SERVER 07",
-      source: `https://vidsrc.cc/v2/embed/tv/${id}/${season}/${episode}?autoPlay=false`,
-      ads: true,
-    },
-    {
-      title: "SERVER 08",
-      source: `https://vidsrc.cc/v3/embed/tv/${id}/${season}/${episode}?autoPlay=false`,
-      fast: true,
-      ads: true,
-    },
-    {
-      title: "SERVER 09",
-      // NOTE: VidKing has a known issue with the `progress` query parameter where it stuck at that timestamp.
-      // Currently, this player can save playback progress but cannot resume from a specific timestamp.
-      // The `progress` parameter is commented out in the source URL until this is resolved.
-      source: `https://www.vidking.net/embed/tv/${id}/${season}/${episode}?color=f5a524&autoplay=false`, //&progress=${startAt || ""}`,
-      fast: true,
-      resumable: true,
-    },
   ];
 };
