@@ -8,7 +8,7 @@ import { Card, Skeleton } from "@heroui/react";
 import { useDisclosure, useDocumentTitle, useIdle, useLocalStorage } from "@mantine/hooks";
 import dynamic from "next/dynamic";
 import { parseAsInteger, useQueryState } from "nuqs";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { MovieDetails } from "tmdb-ts/dist/types/movies";
 import { usePlayerEvents } from "@/hooks/usePlayerEvents";
 const MoviePlayerHeader = dynamic(() => import("./Header"));
@@ -24,6 +24,11 @@ const MoviePlayer: React.FC<MoviePlayerProps> = ({ movie, startAt }) => {
     key: ADS_WARNING_STORAGE_KEY,
     getInitialValueInEffect: false,
   });
+
+  const [isAllFailed, setIsAllFailed] = useState(false);
+  const [showAutoSwitchBanner, setShowAutoSwitchBanner] = useState(true);
+  const userInteractedRef = useRef(false);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     setSeen(true);
@@ -57,11 +62,61 @@ const MoviePlayer: React.FC<MoviePlayerProps> = ({ movie, startAt }) => {
   }, [movie.id, startAt]);
 
   useEffect(() => {
+    // Cancel any existing timeout when source changes
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+
+    // Reset interaction flag when source changes
+    userInteractedRef.current = false;
+    setShowAutoSwitchBanner(true);
+
+    // Start pessimistic timeout: assume failure after 10 seconds
+    timeoutRef.current = setTimeout(() => {
+      if (userInteractedRef.current) {
+        console.log("Auto-switch cancelled: User interacted with the player.");
+        return;
+      }
+
+      console.log(`Timeout reached for source ${selectedSource}. Switching to next...`);
+      const nextSource = selectedSource + 1;
+      if (nextSource < players.length) {
+        setSelectedSource(nextSource);
+      } else {
+        setIsAllFailed(true);
+      }
+    }, 10000); // Increased to 10 seconds to give players more time to report success
+
+    return () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    };
+  }, [selectedSource, players, setSelectedSource]); // Removed userInteracted from dependencies to prevent resetting the timer on click
+
+  useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
+      // Log messages to help debug which events the players are actually sending
+      console.log("Player Message Received:", event.data);
+
       if (event.data && event.data.type === "PLAYER_FALLBACK") {
+        // Existing fallback logic
         const next = event.data.nextSource;
         if (typeof next === "number" && next < players.length) {
           setSelectedSource(next);
+        }
+      } else if (
+        event.data && 
+        (
+          event.data.type === "ready" || 
+          event.data.type === "playing" || 
+          event.data.status === "success" ||
+          event.data.event === "play" ||
+          event.data.state === "playing"
+        )
+      ) {
+        // SUCCESS: Cancel the timeout so it stops auto-switching
+        if (timeoutRef.current) {
+          clearTimeout(timeoutRef.current);
+          timeoutRef.current = null;
         }
       }
     };
@@ -85,17 +140,53 @@ const MoviePlayer: React.FC<MoviePlayerProps> = ({ movie, startAt }) => {
           onOpenSource={handlers.open}
           hidden={idle && !mobile}
         />
-        <Card shadow="md" radius="none" className="relative h-screen">
-          <Skeleton className="absolute h-full w-full" />
-          {seen && (
-            <iframe
-              allowFullScreen
-              key={PLAYER.title}
-              src={PLAYER.source}
-              className={cn("z-10 h-full", { "pointer-events-none": idle && !mobile })}
-            />
-          )}
-        </Card>
+        <div 
+          className="relative h-screen" 
+          onClickCapture={() => {
+            console.log("CLICK DETECTED: Locking player now!");
+            userInteractedRef.current = true;
+            setShowAutoSwitchBanner(false);
+          }}
+        >
+          <Card 
+            shadow="md" 
+            radius="none" 
+            className="relative h-full"
+          >
+            <Skeleton className="absolute h-full w-full" />
+            
+            {showAutoSwitchBanner && (
+              <div className="absolute top-4 left-1/2 -translate-x-1/2 z-30 px-4 py-2 bg-black/60 backdrop-blur-md text-white text-xs rounded-full border border-white/20 pointer-events-none transition-opacity duration-300 animate-bounce">
+                Searching for working server... Please wait.
+              </div>
+            )}
+
+            {isAllFailed ? (
+              <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-black text-center p-6 text-white">
+                <p className="text-xl font-semibold mb-2">Content Not Available</p>
+                <p className="text-sm opacity-70">We tried all available servers, but none could load the movie.</p>
+                <button 
+                  onClick={() => {
+                    setSelectedSource(0);
+                    setIsAllFailed(false);
+                  }}
+                  className="mt-4 px-4 py-2 bg-white text-black rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors"
+                >
+                  Try Again
+                </button>
+              </div>
+            ) : (
+              seen && (
+                <iframe
+                  allowFullScreen
+                  key={PLAYER.title}
+                  src={PLAYER.source}
+                  className={cn("z-10 h-full", { "pointer-events-none": idle && !mobile })}
+                />
+              )
+            )}
+          </Card>
+        </div>
       </div>
 
       <MoviePlayerSourceSelection
