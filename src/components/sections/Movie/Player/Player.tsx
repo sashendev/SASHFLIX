@@ -11,6 +11,7 @@ import { parseAsInteger, useQueryState } from "nuqs";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { MovieDetails } from "tmdb-ts/dist/types/movies";
 import { usePlayerEvents } from "@/hooks/usePlayerEvents";
+
 const MoviePlayerHeader = dynamic(() => import("./Header"));
 const MoviePlayerSourceSelection = dynamic(() => import("./SourceSelection"));
 
@@ -28,7 +29,7 @@ const MoviePlayer: React.FC<MoviePlayerProps> = ({ movie, startAt }) => {
   const [isAllFailed, setIsAllFailed] = useState(false);
   const [showAutoSwitchBanner, setShowAutoSwitchBanner] = useState(true);
   const [serverFound, setServerFound] = useState(false);
-  const userInteractedRef = useRef(false);
+  const [showNextServerPrompt, setShowNextServerPrompt] = useState(false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
@@ -63,38 +64,24 @@ const MoviePlayer: React.FC<MoviePlayerProps> = ({ movie, startAt }) => {
   }, [movie.id, startAt]);
 
   useEffect(() => {
-    // Stop everything if a working server was already found
-    if (serverFound) return;
+    setShowNextServerPrompt(false);
 
-    // Cancel any existing timeout when source changes
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
     }
 
-    // Reset interaction flag when source changes
-    userInteractedRef.current = false;
-    setShowAutoSwitchBanner(true);
-
-    // Start pessimistic timeout: assume failure after 10 seconds
     timeoutRef.current = setTimeout(() => {
-      if (serverFound || userInteractedRef.current) {
-        return;
+      if (!serverFound) {
+        setShowNextServerPrompt(true);
       }
-
-      console.log(`Timeout reached for source ${selectedSource}. Switching to next...`);
-      const nextSource = selectedSource + 1;
-      if (nextSource < players.length) {
-        setSelectedSource(nextSource);
-      } else {
-        setIsAllFailed(true);
-        setShowAutoSwitchBanner(false);
-      }
-    }, 10000);
+    }, 20000);
 
     return () => {
-      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
     };
-  }, [selectedSource, players, setSelectedSource, serverFound]);
+  }, [selectedSource, serverFound]);
 
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
@@ -149,15 +136,7 @@ const MoviePlayer: React.FC<MoviePlayerProps> = ({ movie, startAt }) => {
           onOpenSource={handlers.open}
           hidden={idle && !mobile}
         />
-        <div 
-          className="relative h-screen" 
-          onClickCapture={() => {
-            console.log("CLICK DETECTED: Locking player now!");
-            userInteractedRef.current = true;
-            setServerFound(true);
-            setShowAutoSwitchBanner(false);
-          }}
-        >
+        <div className="relative h-screen">
           <Card 
             shadow="md" 
             radius="none" 
@@ -167,7 +146,7 @@ const MoviePlayer: React.FC<MoviePlayerProps> = ({ movie, startAt }) => {
             
             {showAutoSwitchBanner && (
               <div className="absolute top-4 left-1/2 -translate-x-1/2 z-30 px-4 py-2 bg-black/60 backdrop-blur-md text-white text-xs rounded-full border border-white/20 pointer-events-none transition-opacity duration-300 animate-bounce">
-                Searching for working server... Please wait.
+                Loading movie...
               </div>
             )}
 
@@ -179,6 +158,9 @@ const MoviePlayer: React.FC<MoviePlayerProps> = ({ movie, startAt }) => {
                   onClick={() => {
                     setSelectedSource(0);
                     setIsAllFailed(false);
+                    setServerFound(false);
+                    setShowNextServerPrompt(false);
+                    setShowAutoSwitchBanner(true);
                   }}
                   className="mt-4 px-4 py-2 bg-white text-black rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors"
                 >
@@ -187,12 +169,54 @@ const MoviePlayer: React.FC<MoviePlayerProps> = ({ movie, startAt }) => {
               </div>
             ) : (
               seen && (
-                <iframe
-                  allowFullScreen
-                  key={PLAYER.title}
-                  src={PLAYER.source}
-                  className={cn("z-10 h-full", { "pointer-events-none": idle && !mobile })}
-                />
+                <>
+                  <iframe
+                    allowFullScreen
+                    key={PLAYER.title}
+                    src={PLAYER.source}
+                    className={cn("z-10 h-full w-full", { "pointer-events-none": idle && !mobile })}
+                  />
+
+                  {showNextServerPrompt && !serverFound && (
+                    <div className="absolute inset-0 z-40 flex items-center justify-center bg-black/70">
+                      <div className="w-[380px] rounded-2xl bg-zinc-900 p-6 text-white shadow-2xl pointer-events-auto">
+                        <h3 className="text-lg font-semibold">
+                          Still loading?
+                        </h3>
+                        <p className="mt-2 text-sm text-gray-300">
+                          This server may be slow or temporarily unavailable.
+                          You can keep waiting or try another server.
+                        </p>
+                        <div className="mt-6 flex justify-end gap-3">
+                          <button
+                            onClick={() => setShowNextServerPrompt(false)}
+                            className="rounded-lg border border-zinc-600 px-4 py-2 hover:bg-zinc-800 transition-colors"
+                          >
+                            Keep Waiting
+                          </button>
+                          <button
+                            onClick={() => {
+                              setShowNextServerPrompt(false);
+                              setServerFound(false);
+                              setShowAutoSwitchBanner(true);
+
+                              const nextSource = selectedSource + 1;
+
+                              if (nextSource < players.length) {
+                                setSelectedSource(nextSource);
+                              } else {
+                                setIsAllFailed(true);
+                              }
+                            }}
+                            className="rounded-lg bg-blue-600 px-4 py-2 hover:bg-blue-700 transition-colors"
+                          >
+                            Try Next Server
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </>
               )
             )}
           </Card>

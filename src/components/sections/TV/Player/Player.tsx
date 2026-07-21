@@ -10,6 +10,7 @@ import { Episode, TvShowDetails } from "tmdb-ts";
 import useBreakpoints from "@/hooks/useBreakpoints";
 import { ADS_WARNING_STORAGE_KEY, SpacingClasses } from "@/utils/constants";
 import { usePlayerEvents } from "@/hooks/usePlayerEvents";
+
 const TvShowPlayerHeader = dynamic(() => import("./Header"));
 const TvShowPlayerSourceSelection = dynamic(() => import("./SourceSelection"));
 const TvShowPlayerEpisodeSelection = dynamic(() => import("./EpisodeSelection"));
@@ -42,7 +43,7 @@ const TvShowPlayer: React.FC<TvShowPlayerProps> = ({
   const [isAllFailed, setIsAllFailed] = useState(false);
   const [showAutoSwitchBanner, setShowAutoSwitchBanner] = useState(true);
   const [serverFound, setServerFound] = useState(false);
-  const userInteractedRef = useRef(false);
+  const [showNextServerPrompt, setShowNextServerPrompt] = useState(false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const { mobile } = useBreakpoints();
@@ -73,33 +74,22 @@ const TvShowPlayer: React.FC<TvShowPlayerProps> = ({
   }, [id, episode.season_number, episode.episode_number, startAt]);
 
   useEffect(() => {
-    if (serverFound) return;
+    setShowNextServerPrompt(false);
 
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
     }
 
-    userInteractedRef.current = false;
-    setShowAutoSwitchBanner(true);
-
     timeoutRef.current = setTimeout(() => {
-      if (serverFound || userInteractedRef.current) {
-        return;
+      if (!serverFound) {
+        setShowNextServerPrompt(true);
       }
-
-      const nextSource = selectedSource + 1;
-      if (nextSource < players.length) {
-        setSelectedSource(nextSource);
-      } else {
-        setIsAllFailed(true);
-        setShowAutoSwitchBanner(false);
-      }
-    }, 10000);
+    }, 20000);
 
     return () => {
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
     };
-  }, [selectedSource, players, setSelectedSource, serverFound]);
+  }, [selectedSource, serverFound]);
 
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
@@ -135,6 +125,7 @@ const TvShowPlayer: React.FC<TvShowPlayerProps> = ({
     saveHistory: true,
     metadata: { season: episode.season_number, episode: episode.episode_number },
   });
+  
   useDocumentTitle(
     `Play ${props.seriesName} - ${props.seasonName} - ${episode.name} | ${siteConfig.name}`,
   );
@@ -156,17 +147,15 @@ const TvShowPlayer: React.FC<TvShowPlayerProps> = ({
           {...props}
         />
 
-        <Card shadow="md" radius="none" className="relative h-screen" onClickCapture={() => {
-          userInteractedRef.current = true;
-          setServerFound(true);
-          setShowAutoSwitchBanner(false);
-        }}>
+        <Card shadow="md" radius="none" className="relative h-screen">
           <Skeleton className="absolute h-full w-full" />
+          
           {showAutoSwitchBanner && (
             <div className="absolute top-4 left-1/2 -translate-x-1/2 z-30 px-4 py-2 bg-black/60 backdrop-blur-md text-white text-xs rounded-full border border-white/20 pointer-events-none transition-opacity duration-300 animate-bounce">
-              Searching for working server... Please wait.
+              Loading episode...
             </div>
           )}
+
           {isAllFailed ? (
             <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-black text-center p-6 text-white">
               <p className="text-xl font-semibold mb-2">Content Not Available</p>
@@ -176,6 +165,7 @@ const TvShowPlayer: React.FC<TvShowPlayerProps> = ({
                   setSelectedSource(0);
                   setIsAllFailed(false);
                   setServerFound(false);
+                  setShowAutoSwitchBanner(true);
                 }}
                 className="mt-4 px-4 py-2 bg-white text-black rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors"
               >
@@ -184,12 +174,52 @@ const TvShowPlayer: React.FC<TvShowPlayerProps> = ({
             </div>
           ) : (
             seen && (
-              <iframe
-                allowFullScreen
-                key={PLAYER.title}
-                src={PLAYER.source}
-                className={cn("z-10 h-full", { "pointer-events-none": idle && !mobile })}
-              />
+              <>
+                <iframe
+                  allowFullScreen
+                  key={PLAYER.title}
+                  src={PLAYER.source}
+                  className={cn("z-10 h-full w-full", { "pointer-events-none": idle && !mobile })}
+                />
+                
+                {showNextServerPrompt && !serverFound && (
+                  <div className="absolute inset-0 z-40 flex items-center justify-center bg-black/70">
+                    <div className="w-[380px] rounded-2xl bg-zinc-900 p-6 text-white shadow-2xl pointer-events-auto">
+                      <h3 className="text-lg font-semibold">
+                        Still loading?
+                      </h3>
+                      <p className="mt-2 text-sm text-gray-300">
+                        This may happen because of a slow internet connection or a temporary issue with this server.
+                      </p>
+                      <div className="mt-6 flex justify-end gap-3">
+                        <button
+                          onClick={() => setShowNextServerPrompt(false)}
+                          className="rounded-lg border border-zinc-600 px-4 py-2 hover:bg-zinc-800 transition-colors"
+                        >
+                          Keep Waiting
+                        </button>
+                        <button
+                          onClick={() => {
+                            setShowNextServerPrompt(false);
+                            setServerFound(false);
+                            setShowAutoSwitchBanner(true);
+                            
+                            const next = selectedSource + 1;
+                            if (next < players.length) {
+                              setSelectedSource(next);
+                            } else {
+                              setIsAllFailed(true);
+                            }
+                          }}
+                          className="rounded-lg bg-blue-600 px-4 py-2 hover:bg-blue-700 transition-colors"
+                        >
+                          Try {players[selectedSource + 1] ? players[selectedSource + 1].title : "Again"}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </>
             )
           )}
         </Card>
