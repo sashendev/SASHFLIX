@@ -100,10 +100,10 @@ const TvShowPlayer: React.FC<TvShowPlayerProps> = ({
           setSelectedSource(next);
         }
       } else if (
-        event.data && 
+        event.data &&
         (
-          event.data.type === "ready" || 
-          event.data.type === "playing" || 
+          event.data.type === "ready" ||
+          event.data.type === "playing" ||
           event.data.status === "success" ||
           event.data.event === "play" ||
           event.data.state === "playing"
@@ -125,7 +125,7 @@ const TvShowPlayer: React.FC<TvShowPlayerProps> = ({
     saveHistory: true,
     metadata: { season: episode.season_number, episode: episode.episode_number },
   });
-  
+
   useDocumentTitle(
     `Play ${props.seriesName} - ${props.seasonName} - ${episode.name} | ${siteConfig.name}`,
   );
@@ -149,7 +149,7 @@ const TvShowPlayer: React.FC<TvShowPlayerProps> = ({
 
         <Card shadow="md" radius="none" className="relative h-screen">
           <Skeleton className="absolute h-full w-full" />
-          
+
           {showAutoSwitchBanner && (
             <div className="absolute top-4 left-1/2 -translate-x-1/2 z-30 px-4 py-2 bg-black/60 backdrop-blur-md text-white text-xs rounded-full border border-white/20 pointer-events-none transition-opacity duration-300 animate-bounce">
               Loading episode...
@@ -160,7 +160,7 @@ const TvShowPlayer: React.FC<TvShowPlayerProps> = ({
             <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-black text-center p-6 text-white">
               <p className="text-xl font-semibold mb-2">Content Not Available</p>
               <p className="text-sm opacity-70">We tried all available servers, but none could load the episode.</p>
-              <button 
+              <button
                 onClick={() => {
                   setSelectedSource(0);
                   setIsAllFailed(false);
@@ -181,7 +181,7 @@ const TvShowPlayer: React.FC<TvShowPlayerProps> = ({
                   src={PLAYER.source}
                   className={cn("z-10 h-full w-full", { "pointer-events-none": idle && !mobile })}
                 />
-                
+
                 {showNextServerPrompt && !serverFound && (
                   <div className="absolute inset-0 z-40 flex items-center justify-center bg-black/70">
                     <div className="w-[380px] rounded-2xl bg-zinc-900 p-6 text-white shadow-2xl pointer-events-auto">
@@ -196,14 +196,14 @@ const TvShowPlayer: React.FC<TvShowPlayerProps> = ({
                           onClick={() => setShowNextServerPrompt(false)}
                           className="rounded-lg border border-zinc-600 px-4 py-2 hover:bg-zinc-800 transition-colors"
                         >
-                          Keep Waiting
+                          Keep Watching
                         </button>
                         <button
                           onClick={() => {
                             setShowNextServerPrompt(false);
                             setServerFound(false);
                             setShowAutoSwitchBanner(true);
-                            
+
                             const next = selectedSource + 1;
                             if (next < players.length) {
                               setSelectedSource(next);

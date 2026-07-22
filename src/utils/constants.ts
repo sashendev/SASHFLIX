@@ -8,7 +8,7 @@ const IS_TEST = process.env.NODE_ENV === "test";
 // Storage keys
 const DISCLAIMER_STORAGE_KEY = "disclaimer-agreed";
 const ADS_WARNING_STORAGE_KEY = "ads-warning-seen";
-const LIBRARY_STORAGE_KEY = "bookmarks";
+
 const SEARCH_HISTORY_STORAGE_KEY = "search-histories";
 
 // Others
@@ -27,7 +27,6 @@ export {
   IS_TEST,
   DISCLAIMER_STORAGE_KEY,
   ADS_WARNING_STORAGE_KEY,
-  LIBRARY_STORAGE_KEY,
   SEARCH_HISTORY_STORAGE_KEY,
   ITEMS_PER_PAGE,
   SpacingClasses,

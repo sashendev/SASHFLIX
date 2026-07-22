@@ -97,10 +97,10 @@ const MoviePlayer: React.FC<MoviePlayerProps> = ({ movie, startAt }) => {
           setSelectedSource(next);
         }
       } else if (
-        event.data && 
+        event.data &&
         (
-          event.data.type === "ready" || 
-          event.data.type === "playing" || 
+          event.data.type === "ready" ||
+          event.data.type === "playing" ||
           event.data.status === "success" ||
           event.data.event === "play" ||
           event.data.state === "playing"
@@ -137,13 +137,13 @@ const MoviePlayer: React.FC<MoviePlayerProps> = ({ movie, startAt }) => {
           hidden={idle && !mobile}
         />
         <div className="relative h-screen">
-          <Card 
-            shadow="md" 
-            radius="none" 
+          <Card
+            shadow="md"
+            radius="none"
             className="relative h-full"
           >
             <Skeleton className="absolute h-full w-full" />
-            
+
             {showAutoSwitchBanner && (
               <div className="absolute top-4 left-1/2 -translate-x-1/2 z-30 px-4 py-2 bg-black/60 backdrop-blur-md text-white text-xs rounded-full border border-white/20 pointer-events-none transition-opacity duration-300 animate-bounce">
                 Loading movie...
@@ -154,7 +154,7 @@ const MoviePlayer: React.FC<MoviePlayerProps> = ({ movie, startAt }) => {
               <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-black text-center p-6 text-white">
                 <p className="text-xl font-semibold mb-2">Content Not Available</p>
                 <p className="text-sm opacity-70">We tried all available servers, but none could load the movie.</p>
-                <button 
+                <button
                   onClick={() => {
                     setSelectedSource(0);
                     setIsAllFailed(false);
@@ -192,7 +192,7 @@ const MoviePlayer: React.FC<MoviePlayerProps> = ({ movie, startAt }) => {
                             onClick={() => setShowNextServerPrompt(false)}
                             className="rounded-lg border border-zinc-600 px-4 py-2 hover:bg-zinc-800 transition-colors"
                           >
-                            Keep Waiting
+                            Keep Watcing
                           </button>
                           <button
                             onClick={() => {
