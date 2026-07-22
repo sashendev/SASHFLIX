@@ -50,26 +50,6 @@ export const getMoviePlayers = (id: string | number, startAt?: number): PlayersP
       source: `https://vidsrc.to/embed/movie/${id}`,
       ads: true,
     },
-    {
-      title: "SERVER 07",
-      source: `https://vidsrc.cc/v2/embed/movie/${id}?autoPlay=false`,
-      ads: true,
-    },
-    {
-      title: "SERVER 08",
-      source: `https://vidsrc.cc/v3/embed/movie/${id}?autoPlay=false`,
-      fast: true,
-      ads: true,
-    },
-    {
-      title: "SERVER 09",
-      // NOTE: VidKing has a known issue with the `progress` query parameter where it stuck at that timestamp.
-      // Currently, this player can save playback progress but cannot resume from a specific timestamp.
-      // The `progress` parameter is commented out in the source URL until this is resolved.
-      source: `https://www.vidking.net/embed/movie/${id}?color=006fee&autoplay=false`, //&progress=${startAt || ""}`,
-      fast: true,
-      resumable: true,
-    },
   ];
 };
 
