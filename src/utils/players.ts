@@ -13,7 +13,7 @@ export const getMoviePlayers = (id: string | number, startAt?: number): PlayersP
   return [
     {
       title: "SERVER 01",
-      source: `https://vidlink.pro/movie/${id}?primaryColor=006fee&autoplay=false&startAt=${startAt}`,
+      source: `https://vidsrc.sbs/embed/movie/${id}`,
       recommended: true,
       fast: true,
       ads: true,
@@ -21,7 +21,7 @@ export const getMoviePlayers = (id: string | number, startAt?: number): PlayersP
     },
     {
       title: "SERVER 02",
-      source: `https://vidsrc.mov/embed/movie/${id}`,
+      source: `https://vidlink.pro/movie/${id}?primaryColor=006fee&autoplay=false&startAt=${startAt}`,
       recommended: true,
       fast: true,
       ads: true,
@@ -29,7 +29,7 @@ export const getMoviePlayers = (id: string | number, startAt?: number): PlayersP
     },
     {
       title: "SERVER 03",
-      source: `https://vidlink.pro/movie/${id}?player=jw&primaryColor=006fee&secondaryColor=a2a2a2&iconColor=eefdec&autoplay=false&startAt=${startAt || ""}`,
+      source: `https://vidsrc.mov/embed/movie/${id}`,
       recommended: true,
       fast: true,
       ads: true,
@@ -81,7 +81,7 @@ export const getTvShowPlayers = (
   return [
     {
       title: "SERVER 01",
-      source: `https://vidlink.pro/tv/${id}/${season}/${episode}?primaryColor=f5a524&autoplay=false&startAt=${startAt}`,
+      source: `https://vidsrc.sbs/embed/tv/${id}/${season}/${episode}`,
       recommended: true,
       fast: true,
       ads: true,
@@ -89,7 +89,7 @@ export const getTvShowPlayers = (
     },
     {
       title: "SERVER 02",
-      source: `https://vidsrc.mov/embed/tv/${id}/${season}/${episode}`,
+      source: `https://vidlink.pro/tv/${id}/${season}/${episode}?primaryColor=f5a524&autoplay=false&startAt=${startAt}`,
       recommended: true,
       fast: true,
       ads: true,
@@ -97,7 +97,7 @@ export const getTvShowPlayers = (
     },
     {
       title: "SERVER 03",
-      source: `https://vidlink.pro/tv/${id}/${season}/${episode}?player=jw&primaryColor=f5a524&secondaryColor=a2a2a2&iconColor=eefdec&autoplay=false&startAt=${startAt || ""}`,
+      source: `https://vidsrc.mov/embed/tv/${id}/${season}/${episode}`,
       recommended: true,
       fast: true,
       ads: true,
