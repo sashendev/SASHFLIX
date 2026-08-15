@@ -38,3 +38,68 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# ============================================
+# Mobile / Capacitor specific
+# ============================================
+
+# Android build artifacts & APK
+android/app/build/
+android/.gradle/
+android/local.properties
+*.apk
+*.aab
+
+# iOS build artifacts
+ios/App/build
+ios/App/Pods
+ios/App/xcworkspace/xcuserdata/
+ios/DerivedData/
+
+# Android keystores & signing (SENSITIVE - Never commit!)
+*.keystore
+*.jks
+android/app/keystore/
+android/signing.properties
+
+# iOS signing files (SENSITIVE - Never commit!)
+ios/**/*.mobileprovision
+ios/**/*.p8
+ios/**/*.p12
+ios/**/*.cer
+ios/**/*.key
+
+# IDE specific files
+.idea/
+.vscode/
+*.xcworkspace/xcuserdata/
+*.swiftpm/
+.DS_Store
+
+# Generated mobile config files
+android/app/src/main/assets/capacitor.config.json
+android/app/src/main/assets/capacitor.plugins.json
+ios/App/App/capacitor.config.json
+ios/App/App/config.xml
+
+# Node modules in mobile projects
+android/node_modules/
+ios/node_modules/
+
+# Gradle cache
+.gradle/
+
+# Xcode build files
+*.xcarchive
+*.ipa
+
+# Pod files
+Pods/
+
+# Capacitor plugins
+capacitor-cordova-android-plugins/
+capacitor-cordova-ios-plugins/
+
+# dist folder (build output)
+/dist/
+
