@@ -1,73 +1,136 @@
-# SASHFLIX - Free Movies & TV Shows Streaming
+# SASHFLIX — Discover. Watch. Enjoy.
 
-<div style="text-align:center">
+<div align="center">
 
-![CINEXTMA Mockup Screenshot](https://raw.githubusercontent.com/wisnuwirayuda15/cinextma/refs/heads/master/src/public/img/mockup.png)
+![SASHFLIX Preview](https://raw.githubusercontent.com/sashendev/SASHFLIX/main/public/mockup.png)
+
+**A modern, open-source streaming platform built for discovering and enjoying movies & TV shows.**
 
 </div>
 
-🍿SASHFLIX🍿 is an open-source, free movies and TV shows streaming platform built with the latest web technologies. It offers a seamless and enjoyable viewing experience, allowing users to discover, search, and enjoy a vast library of content.
+---
 
-## Key Features
+## 🎬 About SASHFLIX
 
-- **💸 Free and Open-Source**: SASHFLIX is completely free to use and the source code is available for anyone to explore, contribute, and build upon.
-- **🌗 Light and Dark Mode**: The application supports both light and dark modes, providing a customizable viewing experience that adapts to user preferences.
-- **🧭 Discover Content**: Users can browse through various content categories, such as popular, trending, and upcoming, to discover new movies and TV shows to enjoy.
-- **🔎 Powerful Search**: The search functionality allows users to easily find specific titles, actors, or genres, making it a breeze to locate the content they're interested in.
-- **📂 Personal Library**: Users can build their own personalized library of favorite movies and TV shows, making it easy to keep track of what they've watched and want to watch.
-- **💻📱 Responsive UI**: The platform's user interface is designed to be responsive and accessible across various devices, ensuring a consistent and enjoyable experience on desktops, tablets, and mobile devices.
-- **📲 Progressive Web App**: The platform is designed to be installable on devices and provide native-like features, ensuring a seamless and engaging experience for users.
-- **🙍‍♂️ User Account**: Users can create an account to access personalized features, such as a watchlist and history.
+**SASHFLIX** is a free, open-source movie and TV show streaming platform designed to make discovering and watching content simple, fast, and enjoyable.
 
-## Other Features
+Built with modern web technologies, SASHFLIX combines a clean, responsive interface with powerful discovery tools, personalized libraries, and a foundation designed to grow into a larger entertainment platform.
 
-- **📺 TV Shows** (Finished)
-- **🙍‍♂️ User Account** (Finished)
-- **🏆 Achievements System** (Planned)
-- **⚙️ Personal Settings** (Work in Progress)
-- **🌐 Social Features** (Planned)
+> **Built to explore. Designed to watch. Made to evolve.**
 
-## Technologies Used
+## ✨ Features
 
-SASHFLIX is built using the following technologies:
+* **🆓 Free & Open Source** — Completely free to use, explore, and modify.
+* **🎞️ Movie & TV Discovery** — Explore popular, trending, upcoming, and genre-based content.
+* **🔍 Powerful Search** — Find movies, TV shows, actors, genres, and more.
+* **📚 Personal Watchlist** — Save content you want to watch later.
+* **🕘 Watch History** — Keep track of your viewing activity.
+* **👤 User Accounts** — Create an account and access personalized features.
+* **🌙 Light & Dark Mode** — Switch between themes based on your preference.
+* **📱 Responsive Design** — Works across mobile, tablet, and desktop devices.
+* **📲 Progressive Web App** — Install SASHFLIX on supported devices for an app-like experience.
+* **⚡ Modern & Fast UI** — Designed around smooth navigation and a clean viewing experience.
 
-- **Next.js 15 App Router**: The application leverages the latest version of Next.js, which includes the new App Router, providing a more intuitive and powerful development experience.
-- **Tailwind CSS 4**: The user interface is styled using the Tailwind CSS utility-first CSS framework, ensuring a visually appealing and responsive design.
-- **Next UI**: The project utilizes the Next UI library, which provides a set of high-quality, customizable React components that integrate seamlessly with Tailwind CSS.
-- **TypeScript**: The codebase is written in TypeScript, ensuring better type safety, developer productivity, and maintainability.
-- **TanStack Query**: The application uses the TanStack Query library for efficient data fetching and caching, providing a smooth and responsive user experience.
-- **The Movie Database (TMDB) API**: SASHFLIX integrates with the TMDB API to retrieve movie and TV show data, ensuring access to a vast and up-to-date content library.
-- **Supabase**: The project uses Supabase for user authentication and database management.
+## 🗺️ Project Status
 
-## Getting Started
+| Feature              | Status         |
+| -------------------- | -------------- |
+| 🎬 Movie Discovery   | ✅ Completed    |
+| 📺 TV Shows          | ✅ Completed    |
+| 🔎 Search            | ✅ Completed    |
+| 👤 User Accounts     | ✅ Completed    |
+| 📚 Watchlist         | ✅ Completed    |
+| 🕘 Watch History     | ✅ Completed    |
+| 🌗 Theme System      | 🚧 In Progress |
+| ⚙️ Personal Settings | 🚧 In Progress |
+| 🏆 Achievements      | 📋 Planned     |
+| 🌐 Social Features   | 📋 Planned     |
 
-To run SASHFLIX locally, follow these steps:
+SASHFLIX is actively evolving, and its features may change as development continues.
 
-1. Clone the repository:
+## 🛠️ Built With
 
+* **Next.js** — Application framework and routing
+* **React** — UI architecture
+* **TypeScript** — Type-safe application development
+* **Tailwind CSS** — Responsive styling
+* **Next UI** — UI components
+* **TanStack Query** — Data fetching and caching
+* **TMDB API** — Movie and TV metadata
+* **Supabase** — Authentication and database
+* **Vercel** — Deployment and hosting
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+Make sure you have:
+
+* Node.js
+* npm
+* Git
+
+You will also need the required API keys and service credentials.
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/sashendev/SASHFLIX.git
+cd SASHFLIX
 ```
-git clone https://github.com/wisnuwirayuda15/cinextma.git
-```
 
-2. Install the dependencies:
+### 2. Install dependencies
 
-```
-cd cinextma
+```bash
 npm install
 ```
 
-3. Start the development server:
+### 3. Configure environment variables
 
+Create your local environment file:
+
+```bash
+cp .env.example .env.local
 ```
+
+Add the required API keys and configuration to `.env.local`.
+
+### 4. Start the development server
+
+```bash
 npm run dev
 ```
 
-65:4. Open your browser and visit `http://localhost:3000` to access the SASHFLIX application.
+### 5. Open the application
 
-## Contributing
+Visit:
 
-Contributions to SASHFLIX are welcome! If you'd like to contribute, please refer to the [CONTRIBUTING](CONTRIBUTING.md) file for guidelines and instructions.
+```text
+http://localhost:3000
+```
 
-## License
+## ⚖️ Disclaimer
 
-SASHFLIX is licensed under the [MIT License](LICENSE). This means you are free to use, modify, and distribute the application, as long as you include the original copyright and license notice in your work.
+SASHFLIX is an open-source software project intended for educational and development purposes.
+
+Movie and TV metadata is provided through third-party services such as TMDB. SASHFLIX does not claim ownership of third-party movies, TV shows, artwork, trademarks, or other copyrighted material.
+
+Users are responsible for ensuring that their use and deployment of SASHFLIX comply with applicable laws and the terms of the services they use.
+
+## 📄 License
+
+SASHFLIX is licensed under the **MIT License**.
+
+See [LICENSE](LICENSE) for the complete license text.
+
+---
+
+<div align="center">
+
+### 🍿 SASHFLIX
+
+**Discover something worth watching.**
+
+Made by **Sashen**
+
+</div>
