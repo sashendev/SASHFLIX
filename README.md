@@ -29,6 +29,7 @@ Built with modern web technologies, SASHFLIX combines a clean, responsive interf
 * **🌙 Light & Dark Mode** — Switch between themes based on your preference.
 * **📱 Responsive Design** — Works across mobile, tablet, and desktop devices.
 * **📲 Progressive Web App** — Install SASHFLIX on supported devices for an app-like experience.
+* **📲 Native Mobile Apps** — Build iOS and Android apps with Capacitor from a single codebase.
 * **⚡ Modern & Fast UI** — Designed around smooth navigation and a clean viewing experience.
 
 ## 🗺️ Project Status
@@ -108,6 +109,85 @@ Visit:
 ```text
 http://localhost:3000
 ```
+
+## 📱 Building the Mobile App with Capacitor
+
+SASHFLIX includes Capacitor support for building native iOS and Android mobile apps from your web codebase.
+
+### Prerequisites
+
+**For Android Development:**
+- Android Studio
+- Android SDK 24+
+- Java Development Kit (JDK) 17+
+
+**For iOS Development (macOS only):**
+- Xcode 15.0+
+- CocoaPods
+- iOS deployment target 13.0+
+
+### Quick Start
+
+#### 1. Build and Sync
+
+```bash
+npm run build
+npm run mobile:sync
+```
+
+#### 2. Open Native IDE
+
+```bash
+# Android
+npm run mobile:android
+
+# iOS (macOS only)
+npm run mobile:ios
+```
+
+#### 3. Build APK/IPA
+
+**Android (Debug APK):**
+- In Android Studio: `Build → Build Bundle(s) / APK(s) → Build APK(s)`
+- Find APK in: `android/app/build/outputs/apk/debug/app-debug.apk`
+
+**iOS (IPA):**
+- In Xcode: `Product → Build` 
+- Archive via `Product → Archive`
+
+### Mobile App Commands
+
+```bash
+npm run mobile:build        # Build + Sync (production)
+npm run mobile:sync         # Sync with native projects
+npm run mobile:ios          # Open iOS project in Xcode
+npm run mobile:android      # Open Android project in Android Studio
+```
+
+### Development with Local Server
+
+For development with live reload:
+
+1. Start dev server: `npm run dev`
+2. Update `capacitor.config.ts` with your machine IP (optional for emulator)
+3. Sync: `npm run mobile:sync`
+4. Run: `npm run mobile:ios` or `npm run mobile:android`
+
+### Production Deployment
+
+The mobile app connects to your backend via HTTP. Configure the server URL in `capacitor.config.ts`:
+
+```typescript
+server: {
+  androidScheme: 'https',
+  url: 'https://your-backend-url.com',  // Your production server
+},
+```
+
+### Additional Resources
+
+- **[MOBILE_QUICK_START.md](MOBILE_QUICK_START.md)** — Quick reference for mobile commands
+- **[CAPACITOR_SETUP.md](CAPACITOR_SETUP.md)** — Detailed setup guide and troubleshooting
 
 ## ⚖️ Disclaimer
 
