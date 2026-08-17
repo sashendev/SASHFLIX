@@ -27,7 +27,7 @@ const ContinueWatchingLibrary: React.FC = () => {
 
   const filteredData = useCallback(() => {
     if (!data?.data) return [];
-    if (content === "all") return data.data;
+    // Filter by content type (movie or tv)
     return data.data.filter((item) => item.type === content);
   }, [data, content]);
 
@@ -80,7 +80,7 @@ const ContinueWatchingLibrary: React.FC = () => {
         <div className="flex items-center gap-3">
           <SectionTitle
             className="m-0"
-            color={content === "movie" ? "primary" : content === "tv" ? "warning" : "default"}
+            color={content === "movie" ? "primary" : "warning"}
           >
             Continue Watching
           </SectionTitle>
