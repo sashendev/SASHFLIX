@@ -4,15 +4,34 @@ import SectionTitle from "@/components/ui/other/SectionTitle";
 import Carousel from "@/components/ui/wrapper/Carousel";
 import useDiscoverFilters from "@/hooks/useDiscoverFilters";
 import ResumeCard from "./Cards/Resume";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getUserHistories } from "@/actions/histories";
+import { useCallback } from "react";
 
 const ContinueWatching: React.FC = () => {
   const { content } = useDiscoverFilters();
+  const queryClient = useQueryClient();
   const { data } = useQuery({
     queryFn: () => getUserHistories(),
     queryKey: ["continue-watching"],
   });
+
+  const handleRemoveHistory = useCallback(
+    (historyId: number) => {
+      // Optimistic update: Remove from cache immediately
+      queryClient.setQueryData(
+        ["continue-watching"],
+        (oldData: any) => {
+          if (!oldData?.data) return oldData;
+          return {
+            ...oldData,
+            data: oldData.data.filter((item: any) => item.id !== historyId),
+          };
+        },
+      );
+    },
+    [queryClient],
+  );
 
   if (!data?.data) return null;
 
@@ -29,7 +48,7 @@ const ContinueWatching: React.FC = () => {
                 key={media.id}
                 className="embla__slide flex min-h-fit max-w-fit items-center px-1 py-2"
               >
-                <ResumeCard media={media} />
+                <ResumeCard media={media} onRemove={handleRemoveHistory} />
               </div>
             );
           })}

@@ -3,17 +3,36 @@
 import Rating from "@/components/ui/other/Rating";
 import type { HistoryDetail } from "@/types/movie";
 import { cn } from "@/utils/helpers";
-import { PlayOutline } from "@/utils/icons";
+import { PlayOutline, Close } from "@/utils/icons";
 import { formatDuration, getImageUrl, getReleaseYear, timeAgo } from "@/utils/movies";
 import { Chip, Image, Progress } from "@heroui/react";
 import Link from "next/link";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
+import { deleteHistory } from "@/actions/histories";
 
 interface ResumeCardProps {
   media: HistoryDetail;
+  onRemove?: (historyId: number) => void;
 }
 
-const ResumeCard: React.FC<ResumeCardProps> = ({ media }) => {
+const ResumeCard: React.FC<ResumeCardProps> = ({ media, onRemove }) => {
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleDelete = useCallback(
+    async (e: React.MouseEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      setIsDeleting(true);
+      const result = await deleteHistory(media.id);
+      setIsDeleting(false);
+
+      if (result.success && onRemove) {
+        onRemove(media.id);
+      }
+    },
+    [media.id, onRemove],
+  );
   const releaseYear = getReleaseYear(media.release_date);
   const posterImage = getImageUrl(media.backdrop_path || media.poster_path || "");
 
@@ -33,6 +52,7 @@ const ResumeCard: React.FC<ResumeCardProps> = ({ media }) => {
         <div
           className={cn(
             "group motion-preset-focus relative aspect-video overflow-hidden rounded-lg text-white",
+            isDeleting && "opacity-50",
           )}
         >
           <div className="absolute inset-0 flex items-center justify-center">
@@ -40,13 +60,21 @@ const ResumeCard: React.FC<ResumeCardProps> = ({ media }) => {
               <PlayOutline className="h-6 w-6 text-white" />
             </div>
           </div>
+          <button
+            onClick={handleDelete}
+            disabled={isDeleting}
+            className="absolute right-2 top-2 z-30 flex h-8 w-8 items-center justify-center rounded-full bg-black/50 opacity-0 backdrop-blur-xs transition-opacity hover:bg-red-600/70 group-hover:opacity-100 disabled:opacity-50"
+            title="Remove from continue watching"
+          >
+            <Close className="h-5 w-5 text-white" />
+          </button>
           {media.type === "tv" && (
             <Chip
               size="sm"
               variant="faded"
               radius="sm"
               color="warning"
-              className="absolute right-2 top-2 z-20"
+              className="absolute right-12 top-2 z-20"
               classNames={{ content: "font-bold" }}
             >
               S{media.season} E{media.episode}
@@ -56,7 +84,7 @@ const ResumeCard: React.FC<ResumeCardProps> = ({ media }) => {
             radius="sm"
             size="sm"
             variant="faded"
-            className="absolute left-2 top-2 z-20"
+            className="absolute left-2 top-2 z-20 pr-2"
             color={media.completed ? "success" : undefined}
           >
             {media.completed ? "Completed" : formatDuration(media.last_position)}

@@ -219,3 +219,48 @@ export const getTvShowLastPosition = async (
     return 0;
   }
 };
+
+export const deleteHistory = async (historyId: number): ActionResponse => {
+  try {
+    const supabase = await createClient();
+
+    // Get current user
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
+
+    if (userError || !user) {
+      return {
+        success: false,
+        message: "User not authenticated",
+      };
+    }
+
+    // Delete the history entry
+    const { error } = await supabase
+      .from("histories")
+      .delete()
+      .eq("id", historyId)
+      .eq("user_id", user.id);
+
+    if (error) {
+      console.info("History delete error:", error);
+      return {
+        success: false,
+        message: "Failed to delete history",
+      };
+    }
+
+    return {
+      success: true,
+      message: "History deleted",
+    };
+  } catch (error) {
+    console.info("Unexpected error:", error);
+    return {
+      success: false,
+      message: "An unexpected error occurred",
+    };
+  }
+};
