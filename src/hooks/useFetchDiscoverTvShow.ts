@@ -21,6 +21,15 @@ const fetchDiscoverTvShows = ({
   const popular = () => tmdb.tvShows.popular({ page: page });
   const onTheAir = () => tmdb.tvShows.onTheAir({ page: page });
   const topRated = () => tmdb.tvShows.topRated({ page: page });
+  const asianDramas = () =>
+    tmdb.discover.tvShow({
+      page,
+      sort_by: "popularity.desc",
+      with_genres: "18",
+      with_original_language: "ko|zh|ja",
+      // tmdb-ts omits this supported Discover TV parameter from its type definition.
+      with_origin_country: "KR|CN|JP",
+    } as Parameters<typeof tmdb.discover.tvShow>[0] & { with_origin_country: string });
 
   const queryData = {
     discover,
@@ -29,6 +38,7 @@ const fetchDiscoverTvShows = ({
     popular,
     onTheAir,
     topRated,
+    asianDramas,
   }[type];
 
   // @ts-expect-error: Property 'adult' is missing in type 'PopularTvShowResult' but required in type 'TV'.

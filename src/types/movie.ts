@@ -18,11 +18,12 @@ export type SavedMovieDetails = {
 export const DISCOVER_MOVIES_VALID_QUERY_TYPES = [
   "discover",
   "todayTrending",
+  "topRated",
   "thisWeekTrending",
   "popular",
   "nowPlaying",
   "upcoming",
-  "topRated",
+  
 ] as const;
 
 export type DiscoverMoviesFetchQueryType = (typeof DISCOVER_MOVIES_VALID_QUERY_TYPES)[number];
@@ -34,6 +35,7 @@ export const DISCOVER_TVS_VALID_QUERY_TYPES = [
   "popular",
   "onTheAir",
   "topRated",
+  "asianDramas",
 ] as const;
 
 export type DiscoverTvShowsFetchQueryType = (typeof DISCOVER_TVS_VALID_QUERY_TYPES)[number];

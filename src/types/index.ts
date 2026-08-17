@@ -15,17 +15,19 @@ export type ActionResponse<T = null> = Promise<{
 export type MovieParam =
   | "todayTrending"
   | "thisWeekTrending"
+  | "topRated"
   | "popular"
   | "nowPlaying"
-  | "upcoming"
-  | "topRated";
+  | "upcoming";
+
 
 export type TvShowParam =
   | "todayTrending"
   | "thisWeekTrending"
   | "popular"
   | "onTheAir"
-  | "topRated";
+  | "topRated"
+  | "asianDramas";
 
 export type QueryList<T extends Movie | TV> = {
   name: string;

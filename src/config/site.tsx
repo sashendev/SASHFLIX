@@ -15,7 +15,7 @@ import { TbFolder, TbFolderFilled } from "react-icons/tb";
 
 export const siteConfig: SiteConfigType = {
   name: "SASHFLIX",
-  description: "Your only choice for a free movies and tv shows streaming website.",
+  description: "Your best choice for a free movies and tv shows streaming website.",
   favicon: "/favicon.ico",
   navItems: [
     {
@@ -71,6 +71,11 @@ export const siteConfig: SiteConfigType = {
         param: "todayTrending",
       },
       {
+        name: "Top Rated Movies",
+        query: () => tmdb.movies.topRated(),
+        param: "topRated",
+      },
+      {
         name: "This Week's Trending Movies",
         query: () => tmdb.trending.trending("movie", "week"),
         param: "thisWeekTrending",
@@ -90,11 +95,7 @@ export const siteConfig: SiteConfigType = {
         query: () => tmdb.movies.upcoming(),
         param: "upcoming",
       },
-      {
-        name: "Top Rated Movies",
-        query: () => tmdb.movies.topRated(),
-        param: "topRated",
-      },
+      
     ],
     tvShows: [
       {
@@ -103,15 +104,23 @@ export const siteConfig: SiteConfigType = {
         param: "todayTrending",
       },
       {
-        name: "This Week's Trending TV Shows",
-        query: () => tmdb.trending.trending("tv", "week"),
-        param: "thisWeekTrending",
+        name: "Top Rated TV Shows",
+        // @ts-expect-error: Property 'adult' is missing in type 'TopRatedTvShowResult' but required in type 'TV'.
+        query: () => tmdb.tvShows.topRated(),
+        param: "topRated",
       },
       {
-        name: "Popular TV Shows",
-        // @ts-expect-error: Property 'adult' is missing in type 'PopularTvShowResult' but required in type 'TV'.
-        query: () => tmdb.tvShows.popular(),
-        param: "popular",
+        name: "Asian Dramas",
+        // A mixed Korean, Chinese, and Japanese TV drama row. Discover accepts
+        // pipe-delimited values as an OR filter for these fields.
+        query: () =>
+          tmdb.discover.tvShow({
+            sort_by: "popularity.desc",
+            with_genres: "18",
+            with_original_language: "ko|zh|ja",
+            with_origin_country: "KR|CN|JP",
+          } as Parameters<typeof tmdb.discover.tvShow>[0] & { with_origin_country: string }),
+        param: "asianDramas",
       },
       {
         name: "On The Air TV Shows",
@@ -120,11 +129,16 @@ export const siteConfig: SiteConfigType = {
         param: "onTheAir",
       },
       {
-        name: "Top Rated TV Shows",
-        // @ts-expect-error: Property 'adult' is missing in type 'TopRatedTvShowResult' but required in type 'TV'.
-        query: () => tmdb.tvShows.topRated(),
-        param: "topRated",
+        name: "Popular TV Shows",
+        // @ts-expect-error: Property 'adult' is missing in type 'PopularTvShowResult' but required in type 'TV'.
+        query: () => tmdb.tvShows.popular(),
+        param: "popular",
       },
+      {
+        name: "This Week's Trending TV Shows",
+        query: () => tmdb.trending.trending("tv", "week"),
+        param: "thisWeekTrending",
+      },      
     ],
   },
   socials: {

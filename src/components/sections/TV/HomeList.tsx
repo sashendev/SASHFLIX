@@ -13,7 +13,7 @@ import { TV } from "tmdb-ts/dist/types";
 const TvShowHomeList: React.FC<QueryList<TV>> = ({ query, name, param }) => {
   const key = kebabCase(name) + "-list";
   const { ref, inViewport } = useInViewport();
-  const { data, isPending } = useQuery({
+  const { data, isPending, isError } = useQuery({
     queryFn: query,
     queryKey: [key],
     enabled: inViewport,
@@ -28,6 +28,13 @@ const TvShowHomeList: React.FC<QueryList<TV>> = ({ query, name, param }) => {
             <Skeleton className="h-5 w-20 rounded-full" />
           </div>
           <Skeleton className="h-[250px] rounded-lg md:h-[300px]" />
+        </div>
+      ) : isError || !data?.results.length ? (
+        <div className="flex w-full flex-col gap-2">
+          <SectionTitle color="warning">{name}</SectionTitle>
+          <p className="text-sm text-foreground-500">
+            {isError ? "Unable to load this section right now." : "No TV series found in this section."}
+          </p>
         </div>
       ) : (
         <div className="z-3 flex flex-col gap-2">
