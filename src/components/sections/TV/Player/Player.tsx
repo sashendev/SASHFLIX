@@ -123,7 +123,12 @@ const TvShowPlayer: React.FC<TvShowPlayerProps> = ({
 
   usePlayerEvents({
     saveHistory: true,
-    metadata: { season: episode.season_number, episode: episode.episode_number },
+    metadata: {
+      mediaId: id,
+      mediaType: "tv",
+      season: episode.season_number,
+      episode: episode.episode_number,
+    },
   });
 
   useDocumentTitle(

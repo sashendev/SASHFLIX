@@ -9,7 +9,14 @@ export const GET = async (request: NextRequest) => {
   const { searchParams } = new URL(request.url);
   const token_hash = searchParams.get("token_hash");
   const type = searchParams.get("type") as EmailOtpType | null;
-  const next = searchParams.get("next") ?? "/";
+
+  // Validate `next` to only allow relative paths (same-origin redirects).
+  // This prevents open-redirect abuse where a crafted confirmation link
+  // could confuse users by redirecting to unexpected paths.
+  let next = searchParams.get("next") ?? "/";
+  if (!next.startsWith("/")) {
+    next = "/";
+  }
 
   if (token_hash && type) {
     const supabase = await createClient();
@@ -19,7 +26,9 @@ export const GET = async (request: NextRequest) => {
       token_hash,
     });
 
-    console.error({ error });
+    if (error) {
+      console.error("OTP verification error:", error.message);
+    }
 
     if (!error) {
       return redirect(next);

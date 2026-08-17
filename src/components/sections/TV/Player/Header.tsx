@@ -1,5 +1,6 @@
 import { cn } from "@/utils/helpers";
 import { ArrowLeft, List, Next, Prev, Server } from "@/utils/icons";
+import FullscreenToggleButton from "@/components/ui/button/FullscreenToggleButton";
 import ActionButton from "./ActionButton";
 import { TvShowPlayerProps } from "./Player";
 
@@ -41,6 +42,7 @@ const TvShowPlayerHeader: React.FC<TvShowPlayerHeaderProps> = ({
         </p>
       </div>
       <div className="flex items-center gap-4">
+        <FullscreenToggleButton />
         <ActionButton
           disabled={!prevEpisodeNumber}
           label="Previous Episode"

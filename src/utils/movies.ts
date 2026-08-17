@@ -27,6 +27,18 @@ export const movieDurationString = (minutes?: number): string => {
 };
 
 /**
+ * Returns the four-digit year for a TMDB date, or a safe fallback when the
+ * upstream record has no usable date. TMDB list responses can legitimately
+ * omit release dates, so a raw Date#getFullYear() must not be rendered.
+ */
+export const getReleaseYear = (date?: string | null): string => {
+  if (!date) return "N/A";
+
+  const year = new Date(date).getFullYear();
+  return Number.isFinite(year) ? String(year) : "N/A";
+};
+
+/**
  * Formats a duration in seconds to a human-readable format.
  *
  * @param seconds - The duration in seconds.

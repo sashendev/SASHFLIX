@@ -4,7 +4,7 @@ import Rating from "@/components/ui/other/Rating";
 import type { HistoryDetail } from "@/types/movie";
 import { cn } from "@/utils/helpers";
 import { PlayOutline } from "@/utils/icons";
-import { formatDuration, getImageUrl, timeAgo } from "@/utils/movies";
+import { formatDuration, getImageUrl, getReleaseYear, timeAgo } from "@/utils/movies";
 import { Chip, Image, Progress } from "@heroui/react";
 import Link from "next/link";
 import { useCallback } from "react";
@@ -14,7 +14,7 @@ interface ResumeCardProps {
 }
 
 const ResumeCard: React.FC<ResumeCardProps> = ({ media }) => {
-  const releaseYear = new Date(media.release_date).getFullYear();
+  const releaseYear = getReleaseYear(media.release_date);
   const posterImage = getImageUrl(media.backdrop_path || media.poster_path || "");
 
   const getRedirectLink = useCallback(() => {
@@ -67,7 +67,7 @@ const ResumeCard: React.FC<ResumeCardProps> = ({ media }) => {
             aria-label="Watch progress"
             className="absolute bottom-0 z-10 w-full"
             color={media.type === "movie" ? "primary" : "warning"}
-            value={(media.last_position / media.duration) * 100}
+            value={media.duration > 0 ? (media.last_position / media.duration) * 100 : 0}
           />
           <div className="absolute bottom-0 z-2 h-1/2 w-full bg-linear-to-t from-black from-1%" />
           <div className="absolute bottom-0 z-3 flex w-full flex-col gap-1 p-3">

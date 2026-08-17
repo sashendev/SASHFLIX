@@ -1,19 +1,18 @@
 import { InputWrapperProps } from "@/types/component";
 import { isEmpty } from "@/utils/helpers";
-import { Input, Button, ButtonProps, ButtonGroup, cn } from "@heroui/react";
+import { Button, ButtonProps, ButtonGroup, cn } from "@heroui/react";
 import { useUncontrolled } from "@mantine/hooks";
 import React, { CSSProperties, PropsWithChildren, useCallback } from "react";
 import { kebabCase } from "string-ts";
 
-// for tailwind css
-[
-  "border-warning",
-  "border-primary",
-  "border-secondary",
-  "border-success",
-  "border-danger",
-  "border-default",
-];
+const borderColorClasses: Record<string, string> = {
+  default: "border-default",
+  primary: "border-primary",
+  secondary: "border-secondary",
+  success: "border-success",
+  warning: "border-warning",
+  danger: "border-danger",
+};
 
 type WrapperProps = Omit<React.HTMLAttributes<HTMLDivElement>, "value" | "onChange"> &
   InputWrapperProps;
@@ -104,7 +103,7 @@ const SelectButton = <T extends string = string>({
               variant="faded"
               aria-checked={selected}
               role="radio"
-              className={cn(selected && `border-${color}`)}
+              className={cn(selected && borderColorClasses[color])}
             >
               {item.label}
             </Button>
@@ -115,6 +114,8 @@ const SelectButton = <T extends string = string>({
     </div>
   );
 };
+
+SelectButton.displayName = "SelectButton";
 
 export default SelectButton;
 

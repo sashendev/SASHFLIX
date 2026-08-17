@@ -1,8 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
-  const { searchParams } = new URL(request.url);
+  const { searchParams, origin } = new URL(request.url);
   const nextSource = searchParams.get("nextSource") || "0";
+
+  // Derive the application's own origin so the postMessage target is
+  // restricted to it rather than using the wildcard '*'.
+  // This prevents cross-origin pages from receiving the PLAYER_FALLBACK message.
+  const appOrigin = origin;
 
   const html = `
     <!DOCTYPE html>
@@ -26,7 +31,11 @@ export async function GET(request: NextRequest) {
       <div>Loading alternative source...</div>
       <script>
         if (window.parent && window.parent !== window) {
-          window.parent.postMessage({ type: 'PLAYER_FALLBACK', nextSource: ${parseInt(nextSource, 10)} }, '*');
+          // Use the application's own origin instead of '*' to restrict message delivery.
+          window.parent.postMessage(
+            { type: 'PLAYER_FALLBACK', nextSource: ${parseInt(nextSource, 10)} },
+            ${JSON.stringify(appOrigin)}
+          );
         }
       </script>
     </body>

@@ -21,7 +21,6 @@ import {
   FaStar,
   FaYoutube,
 } from "react-icons/fa6";
-import { FcGoogle } from "react-icons/fc";
 import { FiLogOut } from "react-icons/fi";
 import { GoArrowUpLeft } from "react-icons/go";
 import { HiArrowLongLeft, HiTrash } from "react-icons/hi2";
@@ -51,7 +50,6 @@ export {
   IoEye as Eye,
   IoEyeOff as EyeOff,
   FaGear as Gear,
-  FcGoogle as Google,
   IoGrid as Grid,
   IoMdHelpCircle as Help,
   LuHistory as History,

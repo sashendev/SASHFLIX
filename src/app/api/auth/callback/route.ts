@@ -22,7 +22,7 @@ export const GET = async (request: Request) => {
     if (!error) {
       // Insert username
       if (user) {
-        console.info({ user });
+        console.info("OAuth callback: creating profile for user", user.id);
 
         const { data: profile } = await supabase
           .from("profiles")
@@ -31,7 +31,7 @@ export const GET = async (request: Request) => {
           .single();
 
         if (!profile) {
-          // Get base username dari Google
+          // Generate a base username for the newly confirmed account.
           const baseUsername =
             user.user_metadata?.full_name || user.user_metadata?.name || user.email?.split("@")[0];
 

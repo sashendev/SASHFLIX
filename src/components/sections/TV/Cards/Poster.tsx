@@ -2,7 +2,7 @@ import Rating from "@/components/ui/other/Rating";
 import VaulDrawer from "@/components/ui/overlay/VaulDrawer";
 import useBreakpoints from "@/hooks/useBreakpoints";
 import useDeviceVibration from "@/hooks/useDeviceVibration";
-import { getImageUrl, mutateTvShowTitle } from "@/utils/movies";
+import { getImageUrl, getReleaseYear, mutateTvShowTitle } from "@/utils/movies";
 import { Card, CardBody, CardFooter, CardHeader, Chip, Image, Tooltip } from "@heroui/react";
 import { Icon } from "@iconify/react";
 import { useDisclosure, useHover } from "@mantine/hooks";
@@ -20,7 +20,7 @@ interface TvShowPosterCardProps {
 const TvShowPosterCard: React.FC<TvShowPosterCardProps> = ({ tv, variant = "full" }) => {
   const { hovered, ref } = useHover();
   const [opened, handlers] = useDisclosure(false);
-  const releaseYear = new Date(tv.first_air_date).getFullYear();
+  const releaseYear = getReleaseYear(tv.first_air_date);
   const posterImage = getImageUrl(tv.poster_path);
   const title = mutateTvShowTitle(tv);
   const { mobile } = useBreakpoints();

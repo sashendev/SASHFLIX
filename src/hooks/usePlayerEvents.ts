@@ -1,9 +1,7 @@
-import { syncHistory } from "@/actions/histories";
 import { ContentType } from "@/types";
 import { diff } from "@/utils/helpers";
 import { useDocumentVisibility } from "@mantine/hooks";
 import { useEffect, useRef, useState } from "react";
-import useSupabaseUser from "./useSupabaseUser";
 
 export type PlayerEventType = "play" | "pause" | "seeked" | "ended" | "timeupdate";
 
@@ -84,7 +82,7 @@ export const playerAdapters = {
 } as const satisfies AdapterMap;
 
 export interface UsePlayerEventsOptions {
-  metadata?: { season?: number; episode?: number };
+  metadata?: { mediaId: string | number; mediaType: ContentType; season?: number; episode?: number };
   saveHistory?: boolean;
   onPlay?: (data: UnifiedPlayerEventData) => void;
   onPause?: (data: UnifiedPlayerEventData) => void;
@@ -94,7 +92,6 @@ export interface UsePlayerEventsOptions {
 }
 
 export function usePlayerEvents(options: UsePlayerEventsOptions = {}) {
-  const { data: user } = useSupabaseUser();
   const documentState = useDocumentVisibility();
 
   const { metadata, saveHistory, onPlay, onPause, onSeeked, onEnded, onTimeUpdate } = options;
@@ -103,42 +100,62 @@ export function usePlayerEvents(options: UsePlayerEventsOptions = {}) {
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [lastEvent, setLastEvent] = useState<PlayerEventType | null>(null);
-  const [lastCurrentTime, setLastCurrentTime] = useState(0);
-
   const eventDataRef = useRef<UnifiedPlayerEventData | null>(null);
+  const lastSyncedPositionRef = useRef(0);
 
   const syncToServer = async (data: UnifiedPlayerEventData, completed?: boolean) => {
-    if (!saveHistory || !user) return;
-    if (diff(data.currentTime, lastCurrentTime) <= 5) return; // prevent spam
+    if (!saveHistory || !metadata || data.duration <= 0 || data.currentTime < 10) return;
+    if (!completed && diff(data.currentTime, lastSyncedPositionRef.current) < 30) return;
 
     const payload: UnifiedPlayerEventData = {
       ...data,
-      season: data.season || metadata?.season || 0,
-      episode: data.episode || metadata?.episode || 0,
+      mediaId: metadata.mediaId,
+      mediaType: metadata.mediaType,
+      season: metadata.season ?? data.season ?? 0,
+      episode: metadata.episode ?? data.episode ?? 0,
     };
 
-    const { success, message } = await syncHistory(payload, completed);
-    if (success) setLastCurrentTime(data.currentTime);
-    else console.error("Save history failed:", message);
+    try {
+      const response = await fetch("/api/player/save-history", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...payload, completed: Boolean(completed) }),
+        keepalive: true,
+      });
+      const result = (await response.json()) as { success?: boolean; message?: string };
+      if (result.success) lastSyncedPositionRef.current = data.currentTime;
+      else console.error("Save history failed:", result.message);
+    } catch (error) {
+      console.error("Save history failed:", error);
+    }
   };
 
   useEffect(() => {
-    if (!saveHistory || !user) return;
+    if (!saveHistory) return;
     if (documentState === "visible") return;
     if (!eventDataRef.current) return;
     syncToServer(eventDataRef.current);
-  }, [documentState, lastCurrentTime]);
+  }, [documentState]);
 
   useEffect(() => {
     const handleBeforeUnload = () => {
-      if (!saveHistory || !user) return;
+      if (!saveHistory || !metadata) return;
       if (!eventDataRef.current) return;
 
-      const payload = {
+      const payload: UnifiedPlayerEventData & { completed: boolean } = {
         ...eventDataRef.current,
+        mediaId: metadata.mediaId,
+        mediaType: metadata.mediaType,
+        season: metadata.season ?? eventDataRef.current.season ?? 0,
+        episode: metadata.episode ?? eventDataRef.current.episode ?? 0,
         completed: eventDataRef.current.event === "ended",
       };
-      navigator.sendBeacon("/api/player/save-history", JSON.stringify(payload));
+      if (payload.duration > 0 && payload.currentTime >= 10) {
+        navigator.sendBeacon(
+          "/api/player/save-history",
+          new Blob([JSON.stringify(payload)], { type: "application/json" }),
+        );
+      }
     };
 
     const handleMessage = (event: MessageEvent) => {

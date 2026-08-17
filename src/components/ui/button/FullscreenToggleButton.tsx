@@ -1,10 +1,30 @@
-import { useFullscreen, useMediaQuery } from "@mantine/hooks";
+"use client";
+
 import IconButton from "./IconButton";
 import { MdFullscreenExit, MdFullscreen } from "react-icons/md";
+import { useCallback, useEffect, useState } from "react";
 
 const FullscreenToggleButton: React.FC = () => {
-  const { toggle, fullscreen } = useFullscreen();
-  const pwaInstalled = useMediaQuery("(display-mode: standalone)");
+  const [fullscreen, setFullscreen] = useState(false);
+
+  useEffect(() => {
+    const updateFullscreenState = () => setFullscreen(Boolean(document.fullscreenElement));
+    document.addEventListener("fullscreenchange", updateFullscreenState);
+    return () => document.removeEventListener("fullscreenchange", updateFullscreenState);
+  }, []);
+
+  const toggle = useCallback(async () => {
+    try {
+      if (document.fullscreenElement) {
+        await document.exitFullscreen();
+      } else if (document.documentElement.requestFullscreen) {
+        await document.documentElement.requestFullscreen();
+      }
+    } catch (error) {
+      console.error("Unable to toggle fullscreen:", error);
+    }
+  }, []);
+
   const icon = fullscreen ? (
     <MdFullscreenExit className="size-full" />
   ) : (
@@ -12,17 +32,16 @@ const FullscreenToggleButton: React.FC = () => {
   );
   const tooltip = fullscreen ? "Minimize" : "Fullscreen";
 
-  if (!pwaInstalled)
-    return (
-      <IconButton
-        tooltip={tooltip}
-        tooltipProps={{ placement: "left" }}
-        className="p-2"
-        icon={icon}
-        onPress={toggle}
-        variant="light"
-      />
-    );
+  return (
+    <IconButton
+      tooltip={tooltip}
+      tooltipProps={{ placement: "left" }}
+      className="p-2"
+      icon={icon}
+      onPress={() => void toggle()}
+      variant="light"
+    />
+  );
 };
 
 export default FullscreenToggleButton;

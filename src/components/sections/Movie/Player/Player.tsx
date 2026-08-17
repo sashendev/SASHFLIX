@@ -10,7 +10,7 @@ import dynamic from "next/dynamic";
 import { parseAsInteger, useQueryState } from "nuqs";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { MovieDetails } from "tmdb-ts/dist/types/movies";
-import { usePlayerEvents } from "@/hooks/usePlayerEvents";
+import { playerAdapters, usePlayerEvents } from "@/hooks/usePlayerEvents";
 
 const MoviePlayerHeader = dynamic(() => import("./Header"));
 const MoviePlayerSourceSelection = dynamic(() => import("./SourceSelection"));
@@ -84,14 +84,26 @@ const MoviePlayer: React.FC<MoviePlayerProps> = ({ movie, startAt }) => {
   }, [selectedSource, serverFound]);
 
   useEffect(() => {
+    // Build an allowlist of trusted player origins from the registered adapters.
+    const trustedPlayerOrigins = Object.values(playerAdapters).map((a) => a.origin);
+
     const handleMessage = (event: MessageEvent) => {
-      // Log messages to help debug which events the players are actually sending
-      console.log("Player Message Received:", event.data);
+      // ── Security: validate the message origin ────────────────────────────
+      // Only accept messages from:
+      //   1. The application's own origin (for PLAYER_FALLBACK from /api/player/fallback)
+      //   2. Origins registered in the playerAdapters list
+      const ownOrigin = typeof window !== "undefined" ? window.location.origin : "";
+      const isTrustedOrigin =
+        event.origin === ownOrigin ||
+        trustedPlayerOrigins.some((o) => o === event.origin);
+
+      if (!isTrustedOrigin) return;
+      // ─────────────────────────────────────────────────────────────────────
 
       if (serverFound) return;
 
       if (event.data && event.data.type === "PLAYER_FALLBACK") {
-        // Existing fallback logic
+        // Fallback: switch to the next source
         const next = event.data.nextSource;
         if (typeof next === "number" && next < players.length) {
           setSelectedSource(next);
@@ -107,7 +119,6 @@ const MoviePlayer: React.FC<MoviePlayerProps> = ({ movie, startAt }) => {
         )
       ) {
         // SUCCESS: Stop auto-switching permanently
-        console.log("WORKING SERVER FOUND: Stopping auto-switch.");
         setServerFound(true);
         setShowAutoSwitchBanner(false);
         if (timeoutRef.current) {
@@ -120,7 +131,7 @@ const MoviePlayer: React.FC<MoviePlayerProps> = ({ movie, startAt }) => {
     return () => window.removeEventListener("message", handleMessage);
   }, [players.length, setSelectedSource, serverFound]);
 
-  usePlayerEvents({ saveHistory: true });
+  usePlayerEvents({ saveHistory: true, metadata: { mediaId: movie.id, mediaType: "movie" } });
   useDocumentTitle(`Play ${title} | ${siteConfig.name}`);
 
   const PLAYER = useMemo(() => players[selectedSource] || players[0], [players, selectedSource]);

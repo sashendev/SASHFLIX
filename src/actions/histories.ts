@@ -11,7 +11,6 @@ export const syncHistory = async (
   data: UnifiedPlayerEventData,
   completed?: boolean,
 ): ActionResponse => {
-  console.info("Saving history:", data);
 
   if (!data) return { success: false, message: "No data to save" };
 
@@ -90,7 +89,6 @@ export const syncHistory = async (
       };
     }
 
-    console.info("History saved:", history);
 
     return {
       success: true,
