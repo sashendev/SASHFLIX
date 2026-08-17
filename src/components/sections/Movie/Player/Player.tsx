@@ -182,6 +182,7 @@ const MoviePlayer: React.FC<MoviePlayerProps> = ({ movie, startAt }) => {
               seen && (
                 <>
                   <iframe
+                    allow="fullscreen; autoplay; picture-in-picture"
                     allowFullScreen
                     key={PLAYER.title}
                     src={PLAYER.source}

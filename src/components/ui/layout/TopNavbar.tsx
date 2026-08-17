@@ -7,7 +7,6 @@ import { Navbar, NavbarBrand, NavbarContent, NavbarItem } from "@heroui/react";
 import { useWindowScroll } from "@mantine/hooks";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import FullscreenToggleButton from "../button/FullscreenToggleButton";
 import UserProfileButton from "../button/UserProfileButton";
 import SearchInput from "../input/SearchInput";
 import ThemeSwitchDropdown from "../input/ThemeSwitchDropdown";
@@ -60,7 +59,6 @@ const TopNavbar = () => {
       <NavbarContent justify="end">
         <NavbarItem className="flex gap-1">
           <ThemeSwitchDropdown />
-          <FullscreenToggleButton />
           <UserProfileButton />
         </NavbarItem>
       </NavbarContent>

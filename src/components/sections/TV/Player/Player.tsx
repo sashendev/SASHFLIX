@@ -181,6 +181,7 @@ const TvShowPlayer: React.FC<TvShowPlayerProps> = ({
             seen && (
               <>
                 <iframe
+                  allow="fullscreen; autoplay; picture-in-picture"
                   allowFullScreen
                   key={PLAYER.title}
                   src={PLAYER.source}

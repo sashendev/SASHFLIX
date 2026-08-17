@@ -7,23 +7,15 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint src next.config.ts capacitor.config.ts",
+    "lint": "eslint src next.config.ts",
     "sb-start": "supabase start --debug --ignore-health-check",
     "sb-stop": "supabase stop --debug --all",
     "sb-restart": "supabase stop --debug --all && supabase start --debug --ignore-health-check",
     "sb-db-reset": "supabase db reset",
-    "sb-db-types": "supabase gen types typescript --local > src/utils/supabase/types.ts",
-    "mobile:build": "npm run build && npx cap sync",
-    "mobile:sync": "npx cap sync",
-    "mobile:ios": "npx cap open ios",
-    "mobile:android": "npx cap open android",
-    "mobile:help": "node scripts/build-mobile.mjs dev"
+    "sb-db-types": "supabase gen types typescript --local > src/utils/supabase/types.ts"
   },
   "dependencies": {
     "@bprogress/next": "^3.2.12",
-    "@capacitor/android": "^8.5.0",
-    "@capacitor/core": "^8.5.0",
-    "@capacitor/ios": "^8.5.0",
     "@ducanh2912/next-pwa": "^10.2.6",
     "@heroui/react": "^2.8.3",
     "@hookform/resolvers": "^5.2.1",
@@ -56,7 +48,6 @@
     "zod": "^4.1.1"
   },
   "devDependencies": {
-    "@capacitor/cli": "^8.5.0",
     "@iconify/react": "^6.0.0",
     "@tailwindcss/postcss": "^4.1.12",
     "@tanstack/react-query-devtools": "^5.85.3",

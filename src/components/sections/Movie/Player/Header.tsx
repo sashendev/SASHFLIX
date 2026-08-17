@@ -1,6 +1,5 @@
 import { cn } from "@/utils/helpers";
 import { ArrowLeft, Server } from "@/utils/icons";
-import FullscreenToggleButton from "@/components/ui/button/FullscreenToggleButton";
 import ActionButton from "./ActionButton";
 
 interface MoviePlayerHeaderProps {
@@ -32,7 +31,6 @@ const MoviePlayerHeader: React.FC<MoviePlayerHeaderProps> = ({
         <p className="text-sm text-white text-shadow-lg sm:text-lg lg:text-xl">{movieName}</p>
       </div>
       <div className="flex items-center gap-4">
-        <FullscreenToggleButton />
         <ActionButton label="Sources" tooltip="Sources" onClick={onOpenSource}>
           <Server size={34} />
         </ActionButton>

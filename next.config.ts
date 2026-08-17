@@ -45,10 +45,11 @@ const securityHeaders = [
     value: "strict-origin-when-cross-origin",
   },
   {
-    // Restrict browser features. The streaming player needs fullscreen;
-    // no other sensitive features are required by this application.
+    // Allow fullscreen for the embedded streaming player frames.
+    // The application relies on third-party player iframes (vidsrc, vidlink, etc.),
+    // so fullscreen must be enabled for those origins as well.
     key: "Permissions-Policy",
-    value: "camera=(), microphone=(), geolocation=(), payment=(), usb=(), fullscreen=(self)",
+    value: "camera=(), microphone=(), geolocation=(), payment=(), usb=(), fullscreen=*",
   },
   {
     // HSTS: tell browsers to only connect via HTTPS for 1 year.
