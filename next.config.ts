@@ -10,6 +10,42 @@ const withPWA = withPWAInit({
   aggressiveFrontEndNavCaching: true,
   workboxOptions: {
     disableDevLogs: true,
+    // Runtime caching strategies
+    // API calls – try network first, fallback to cache
+    runtimeCaching: [
+      {
+        urlPattern: /\/(api|auth)\//,
+        handler: "NetworkFirst",
+        options: {
+          cacheName: "api-cache",
+          expiration: {
+            maxEntries: 100,
+            maxAgeSeconds: 60 * 60, // 1 hour
+          },
+        },
+      },
+      // Static assets – cache first
+      {
+        urlPattern: /\.(?:png|jpg|jpeg|svg|webp|css|js|json)$/,
+        handler: "CacheFirst",
+        options: {
+          cacheName: "static-assets",
+          expiration: {
+            maxEntries: 200,
+            maxAgeSeconds: 7 * 24 * 60 * 60, // 1 week
+          },
+        },
+      },
+      // Video streaming – always network (no caching)
+      {
+        urlPattern: /\.(?:mp4|webm|m3u8|ts)$/,
+        handler: "NetworkOnly",
+      },
+    ],
+  },
+  // Offline fallback configuration: serve the custom offline page when a document request fails.
+  fallbacks: {
+    document: "/~offline",
   },
 });
 
@@ -70,14 +106,17 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
-  // https://github.com/payloadcms/payload/issues/12550#issuecomment-2939070941
-  turbopack: {
-    resolveExtensions: [".mdx", ".tsx", ".ts", ".jsx", ".js", ".mjs", ".json"],
-  },
+  // Retain original resolve extensions while using the default bundler (Webpack).
+  // No explicit turbopack configuration is needed; setting experimental.turbopack
+  // to false (below) forces Next.js to use Webpack, which is compatible with
+  // @ducanh2912/next-pwa.
   experimental: {
+    // Webpack is used by default for next-pwa compatibility; no explicit turbopack flag needed.
     optimizePackageImports: ["@heroui/react"],
     prefetchInlining: true,
   },
+  // Provide an empty turbopack config to silence Turbopack‑webpack conflict warning.
+  turbopack: {},
   async headers() {
     return [
       {
