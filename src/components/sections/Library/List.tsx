@@ -4,7 +4,6 @@ import { getWatchlist, removeAllWatchlist } from "@/actions/library";
 import { queryClient } from "@/app/providers";
 import BackToTopButton from "@/components/ui/button/BackToTopButton";
 import ContentTypeSelection from "@/components/ui/other/ContentTypeSelection";
-import ContinueWatchingLibrary from "@/components/sections/Library/ContinueWatching";
 import useDiscoverFilters from "@/hooks/useDiscoverFilters";
 import useSupabaseUser from "@/hooks/useSupabaseUser";
 import { isEmpty } from "@/utils/helpers";
@@ -134,7 +133,6 @@ const LibraryList = () => {
   return (
     <>
       <div className="relative flex flex-col items-center justify-center gap-10">
-        <ContinueWatchingLibrary />
         <div className="flex w-full flex-col items-center justify-center gap-2">
           <ContentTypeSelection className="justify-center" />
           <Select

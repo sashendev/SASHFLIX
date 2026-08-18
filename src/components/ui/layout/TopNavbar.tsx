@@ -3,7 +3,8 @@
 import BackButton from "@/components/ui/button/BackButton";
 import { siteConfig } from "@/config/site";
 import { cn } from "@/utils/helpers";
-import { Navbar, NavbarBrand, NavbarContent, NavbarItem } from "@heroui/react";
+import { Button, Navbar, NavbarBrand, NavbarContent, NavbarItem } from "@heroui/react";
+import { Icon } from "@iconify/react";
 import { useWindowScroll } from "@mantine/hooks";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -11,6 +12,7 @@ import UserProfileButton from "../button/UserProfileButton";
 import SearchInput from "../input/SearchInput";
 import ThemeSwitchDropdown from "../input/ThemeSwitchDropdown";
 import BrandLogo from "../other/BrandLogo";
+import { useSidebar } from "./SidebarContext";
 
 const TopNavbar = () => {
   const pathName = usePathname();
@@ -21,6 +23,7 @@ const TopNavbar = () => {
   const tv = pathName.includes("/tv/");
   const player = pathName.includes("/player");
   const auth = pathName.includes("/auth");
+  const { collapsed, toggle } = useSidebar();
 
   if (auth || player) return null;
 
@@ -41,8 +44,29 @@ const TopNavbar = () => {
           style={{ opacity: opacity }}
         />
       )}
-      <NavbarBrand>
-        {show ? <BrandLogo /> : <BackButton href={tv ? "/?content=tv" : "/"} />}
+      <NavbarBrand className="gap-2">
+        {show ? (
+          <>
+            <Button
+              isIconOnly
+              variant="light"
+              radius="full"
+              size="sm"
+              aria-label="Toggle sidebar"
+              onPress={toggle}
+              className="hidden md:flex"
+            >
+              <Icon
+                icon={collapsed ? "mdi:menu" : "mdi:menu-open"}
+                width={22}
+                height={22}
+              />
+            </Button>
+            <BrandLogo />
+          </>
+        ) : (
+          <BackButton href={tv ? "/?content=tv" : "/"} />
+        )}
       </NavbarBrand>
       {show && !pathName.startsWith("/search") && (
         <NavbarContent className="hidden w-full max-w-lg gap-2 md:flex" justify="center">

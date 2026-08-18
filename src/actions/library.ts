@@ -399,3 +399,94 @@ export async function toggleWatchlist(item: WatchlistItem): Promise<ActionRespon
     return await addToWatchlist(item);
   }
 }
+
+/**
+ * Get user's continue watching (incomplete items with playback progress)
+ */
+export async function getContinueWatching(
+  filterType: FilterType = "all",
+  page: number = 1,
+  limit: number = 20,
+): Promise<WatchlistResponse> {
+  try {
+    const supabase = await createClient();
+
+    // Get current user
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
+
+    if (userError || !user) {
+      return {
+        success: false,
+        data: [],
+        error: "User not authenticated",
+      };
+    }
+
+    // Calculate offset
+    const offset = (page - 1) * limit;
+
+    // Build query - get incomplete items from histories table
+    let query = supabase
+      .from("histories")
+      .select("*", { count: "exact" })
+      .eq("user_id", user.id)
+      .eq("completed", false)
+      .gt("last_position", 0)  // Only show items that have been started
+      .order("updated_at", { ascending: false })
+      .range(offset, offset + limit - 1);
+
+    // Apply type filter if not 'all'
+    if (filterType !== "all" && ["movie", "tv"].includes(filterType)) {
+      query = query.eq("type", filterType);
+    }
+
+    const { data, count, error } = await query;
+
+    if (error) {
+      console.error("Continue watching fetch error:", error);
+      return {
+        success: false,
+        data: [],
+        error: "Failed to fetch continue watching",
+      };
+    }
+
+    // Convert histories format to watchlist format
+    const formattedData = (data || []).map((item: any) => ({
+      id: item.media_id,
+      type: item.type,
+      adult: item.adult,
+      backdrop_path: item.backdrop_path,
+      poster_path: item.poster_path,
+      release_date: item.release_date,
+      title: item.title,
+      vote_average: item.vote_average,
+      // histories table includes user_id; include it for WatchlistEntry compatibility
+      user_id: item.user_id,
+      created_at: item.updated_at,
+      last_position: item.last_position,
+      duration: item.duration,
+    }));
+
+    const totalPages = Math.ceil((count || 0) / limit);
+
+    return {
+      success: true,
+      data: formattedData,
+      totalCount: count || 0,
+      totalPages,
+      currentPage: page,
+      hasNextPage: page < totalPages,
+    };
+  } catch (error) {
+    console.error("Unexpected error:", error);
+    return {
+      success: false,
+      data: [],
+      error: "An unexpected error occurred",
+    };
+  }
+}

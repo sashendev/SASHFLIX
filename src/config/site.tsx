@@ -1,17 +1,16 @@
 import { tmdb } from "@/api/tmdb";
 import { SiteConfigType } from "@/types";
-import { BiSearchAlt2, BiSolidSearchAlt2 } from "react-icons/bi";
+import { Icon } from "@iconify/react";
 import { GoHomeFill, GoHome } from "react-icons/go";
 import { HiComputerDesktop } from "react-icons/hi2";
 import { IoIosSunny } from "react-icons/io";
 import {
-  IoCompass,
-  IoCompassOutline,
   IoInformationCircle,
   IoInformationCircleOutline,
   IoMoon,
 } from "react-icons/io5";
-import { TbFolder, TbFolderFilled } from "react-icons/tb";
+import { TbClock, TbClockFilled } from "react-icons/tb";
+import { TbHistory } from "react-icons/tb";
 
 export const siteConfig: SiteConfigType = {
   name: "SASHFLIX",
@@ -27,20 +26,32 @@ export const siteConfig: SiteConfigType = {
     {
       label: "Discover",
       href: "/discover",
-      icon: <IoCompassOutline className="size-full" />,
-      activeIcon: <IoCompass className="size-full" />,
+      icon: <Icon icon="mdi:compass-outline" className="size-full" />,
+      activeIcon: <Icon icon="mdi:compass" className="size-full" />,
     },
     {
-      label: "Search",
-      href: "/search",
-      icon: <BiSearchAlt2 className="size-full" />,
-      activeIcon: <BiSolidSearchAlt2 className="size-full" />,
+      label: "History",
+      href: "/history",
+      icon: <TbHistory className="size-full" />,
+      activeIcon: <TbHistory className="size-full" />,
     },
     {
-      label: "Library",
-      href: "/library",
-      icon: <TbFolder className="size-full" />,
-      activeIcon: <TbFolderFilled className="size-full" />,
+      label: "Continue Watching",
+      href: "/continue-watching",
+      icon: <Icon icon="mdi:play-circle-outline" className="size-full" />,
+      activeIcon: <Icon icon="mdi:play-circle" className="size-full" />,
+    },
+    {
+      label: "Watch Later",
+      href: "/watch-later",
+      icon: <TbClock className="size-full" />,
+      activeIcon: <TbClockFilled className="size-full" />,
+    },
+    {
+      label: "You",
+      href: "/you",
+      icon: <Icon icon="mdi:account-circle-outline" className="size-full" />,
+      activeIcon: <Icon icon="mdi:account-circle" className="size-full" />,
     },
     {
       label: "About",

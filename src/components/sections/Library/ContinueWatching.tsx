@@ -134,7 +134,7 @@ const ContinueWatchingLibrary: React.FC = () => {
                       handleRemoveHistory(media.id);
                     }}
                     disabled={isDeleting}
-                    className="absolute right-1 top-1 z-30 flex h-6 w-6 items-center justify-center rounded-full bg-black/50 opacity-0 backdrop-blur-xs transition-opacity hover:bg-red-600/70 group-hover:opacity-100 disabled:opacity-50"
+                    className="absolute right-1 top-1 z-30 flex h-6 w-6 items-center justify-center rounded-full bg-black/50 opacity-100 backdrop-blur-xs transition-opacity hover:bg-red-600/70 sm:opacity-0 sm:group-hover:opacity-100 disabled:opacity-50"
                     title="Remove from continue watching"
                   >
                     <svg

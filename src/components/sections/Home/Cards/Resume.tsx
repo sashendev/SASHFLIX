@@ -63,7 +63,7 @@ const ResumeCard: React.FC<ResumeCardProps> = ({ media, onRemove }) => {
           <button
             onClick={handleDelete}
             disabled={isDeleting}
-            className="absolute right-2 top-2 z-30 flex h-8 w-8 items-center justify-center rounded-full bg-black/50 opacity-0 backdrop-blur-xs transition-opacity hover:bg-red-600/70 group-hover:opacity-100 disabled:opacity-50"
+            className="absolute right-2 top-2 z-30 flex h-8 w-8 items-center justify-center rounded-full bg-black/50 opacity-100 backdrop-blur-xs transition-opacity hover:bg-red-600/70 sm:opacity-0 sm:group-hover:opacity-100 disabled:opacity-50"
             title="Remove from continue watching"
           >
             <Close className="h-5 w-5 text-white" />

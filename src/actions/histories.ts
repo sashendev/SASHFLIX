@@ -103,7 +103,10 @@ export const syncHistory = async (
   }
 };
 
-export const getUserHistories = async (limit: number = 20): ActionResponse<HistoryDetail[]> => {
+export const getUserHistories = async (
+  limit: number = 20,
+  page: number = 1,
+): ActionResponse<HistoryDetail[]> => {
   try {
     const supabase = await createClient();
 
@@ -120,12 +123,68 @@ export const getUserHistories = async (limit: number = 20): ActionResponse<Histo
       };
     }
 
+    const offset = (page - 1) * limit;
+
     const { data, error } = await supabase
       .from("histories")
       .select("*")
       .eq("user_id", user.id)
       .order("updated_at", { ascending: false })
-      .limit(limit);
+      .range(offset, offset + limit - 1);
+
+    if (error) {
+      console.info("History fetch error:", error);
+      return {
+        success: false,
+        message: "Failed to fetch history",
+      };
+    }
+
+    return {
+      success: true,
+      data,
+    };
+  } catch (error) {
+    console.info("Unexpected error:", error);
+    return {
+      success: false,
+      message: "An unexpected error occurred",
+    };
+  }
+};
+
+/**
+ * Get user's completed watch history with pagination
+ */
+export const getCompletedHistory = async (
+  limit: number = 20,
+  page: number = 1,
+): ActionResponse<HistoryDetail[]> => {
+  try {
+    const supabase = await createClient();
+
+    // Get current user
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
+
+    if (userError || !user) {
+      return {
+        success: false,
+        message: "User not authenticated",
+      };
+    }
+
+    const offset = (page - 1) * limit;
+
+    const { data, error } = await supabase
+      .from("histories")
+      .select("*")
+      .eq("user_id", user.id)
+      .eq("completed", true)
+      .order("updated_at", { ascending: false })
+      .range(offset, offset + limit - 1);
 
     if (error) {
       console.info("History fetch error:", error);
