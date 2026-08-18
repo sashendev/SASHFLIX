@@ -57,6 +57,13 @@ export const CategoryList: React.FC = () => {
     Thriller: "mdi:flash-alert",
     War: "mdi:shield-sword",
     Western: "mdi:hat-fedora",
+    Kids: "mdi:puzzle",
+    News: "mdi:newspaper",
+    Reality: "mdi:account-group",
+    "Sci-Fi & Fantasy": "mdi:atom",
+    Soap: "mdi:heart-multiple",
+    Talk: "mdi:forum-outline",
+    "War & Politics": "mdi:shield-sword",
   };
 
   if (isLoading) {

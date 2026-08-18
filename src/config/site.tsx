@@ -16,6 +16,38 @@ export const siteConfig: SiteConfigType = {
   name: "SASHFLIX",
   description: "Your best choice for a free movies and tv shows streaming website.",
   favicon: "/favicon.ico",
+  mobileNavItems: [
+    {
+      label: "Home",
+      href: "/",
+      icon: <GoHome className="size-full" />,
+      activeIcon: <GoHomeFill className="size-full" />,
+    },
+    {
+      label: "Discover",
+      href: "/discover",
+      icon: <Icon icon="mdi:compass-outline" className="size-full" />,
+      activeIcon: <Icon icon="mdi:compass" className="size-full" />,
+    },
+    {
+      label: "Today's Trending",
+      href: "/discover?type=todayTrending",
+      icon: <Icon icon="mdi:fire" className="size-full" />,
+      activeIcon: <Icon icon="mdi:fire" className="size-full" />,
+    },
+    {
+      label: "You",
+      href: "/you",
+      icon: <Icon icon="mdi:account-circle-outline" className="size-full" />,
+      activeIcon: <Icon icon="mdi:account-circle" className="size-full" />,
+    },
+    {
+      label: "About",
+      href: "/about",
+      icon: <IoInformationCircleOutline className="size-full" />,
+      activeIcon: <IoInformationCircle className="size-full" />,
+    },
+  ],
   navItems: [
     {
       label: "Home",
@@ -106,7 +138,7 @@ export const siteConfig: SiteConfigType = {
         query: () => tmdb.movies.upcoming(),
         param: "upcoming",
       },
-      
+
     ],
     tvShows: [
       {
@@ -149,7 +181,7 @@ export const siteConfig: SiteConfigType = {
         name: "This Week's Trending TV Shows",
         query: () => tmdb.trending.trending("tv", "week"),
         param: "thisWeekTrending",
-      },      
+      },
     ],
   },
   socials: {

@@ -41,6 +41,7 @@ export type QueryList<T extends Movie | TV> = {
 };
 
 export type SiteConfigType = {
+  mobileNavItems: any;
   name: string;
   description: string;
   favicon: string;

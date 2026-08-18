@@ -3,13 +3,14 @@
 import { siteConfig } from "@/config/site";
 import clsx from "clsx";
 import { Link } from "@heroui/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { Chip } from "@heroui/chip";
 
 const BottomNavbar = () => {
   const pathName = usePathname();
-  const hrefs = siteConfig.navItems.map((item) => item.href);
-  const show = hrefs.includes(pathName);
+  const searchParams = useSearchParams();
+
+  const show = ["/", "/discover", "/you", "/about"].includes(pathName);
 
   return (
     show && (
@@ -17,8 +18,15 @@ const BottomNavbar = () => {
         <div className="pt-20 md:hidden" />
         <div className="fixed bottom-0 left-0 z-50 block h-fit w-full translate-y-px border-t border-secondary-background bg-background py-2 md:hidden">
           <div className="mx-auto grid h-full max-w-lg grid-cols-5">
-            {siteConfig.navItems.map((item) => {
-              const isActive = pathName === item.href;
+            {siteConfig.mobileNavItems.map((item: any) => {
+              const isTrending =
+                pathName === "/discover" &&
+                searchParams.get("type") === "todayTrending";
+
+              const isActive =
+                item.href === "/discover?type=todayTrending"
+                  ? isTrending
+                  : pathName === item.href;
               return (
                 <Link
                   href={item.href}
@@ -36,7 +44,6 @@ const BottomNavbar = () => {
                     >
                       {isActive ? item.activeIcon : item.icon}
                     </Chip>
-                    <p className={clsx("text-[10px]", { "font-bold": isActive })}>{item.label}</p>
                   </div>
                 </Link>
               );
