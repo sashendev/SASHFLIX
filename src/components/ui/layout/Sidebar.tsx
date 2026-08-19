@@ -54,7 +54,7 @@ const Sidebar: React.FC<{ children: React.ReactNode }> = ({ children }) => {
               <SidebarSection title={collapsed ? undefined : "More"}>
                 <SidebarLink
                   href="/about"
-                  icon={<Icon icon="mdi:information-outline" width={22} height={22} />}
+                  icon={<Icon icon="mdi:information-variant-circle" width={22} height={22} />}
                   label="About"
                 />
               </SidebarSection>

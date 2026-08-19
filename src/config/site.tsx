@@ -2,13 +2,9 @@ import { tmdb } from "@/api/tmdb";
 import { SiteConfigType } from "@/types";
 import { Icon } from "@iconify/react";
 import { GoHomeFill, GoHome } from "react-icons/go";
-import { HiComputerDesktop } from "react-icons/hi2";
+import { HiSparkles } from "react-icons/hi2";
 import { IoIosSunny } from "react-icons/io";
-import {
-  IoInformationCircle,
-  IoInformationCircleOutline,
-  IoMoon,
-} from "react-icons/io5";
+import { IoMoon } from "react-icons/io5";
 import { TbClock, TbClockFilled } from "react-icons/tb";
 import { TbHistory } from "react-icons/tb";
 
@@ -30,10 +26,10 @@ export const siteConfig: SiteConfigType = {
       activeIcon: <Icon icon="mdi:compass" className="size-full" />,
     },
     {
-      label: "Today's Trending",
-      href: "/discover?type=todayTrending",
-      icon: <Icon icon="mdi:fire" className="size-full" />,
-      activeIcon: <Icon icon="mdi:fire" className="size-full" />,
+      label: "Search",
+      href: "/search",
+      icon: <Icon icon="mdi:magnify" className="size-full" />,
+      activeIcon: <Icon icon="mdi:magnify" className="size-full" />,
     },
     {
       label: "You",
@@ -44,8 +40,8 @@ export const siteConfig: SiteConfigType = {
     {
       label: "About",
       href: "/about",
-      icon: <IoInformationCircleOutline className="size-full" />,
-      activeIcon: <IoInformationCircle className="size-full" />,
+      icon: <Icon icon="mdi:information-variant-circle-outline" className="size-full" />,
+      activeIcon: <Icon icon="mdi:information-variant-circle" className="size-full" />,
     },
   ],
   navItems: [
@@ -88,8 +84,8 @@ export const siteConfig: SiteConfigType = {
     {
       label: "About",
       href: "/about",
-      icon: <IoInformationCircleOutline className="size-full" />,
-      activeIcon: <IoInformationCircle className="size-full" />,
+      icon: <Icon icon="mdi:information-variant-circle-outline" className="size-full" />,
+      activeIcon: <Icon icon="mdi:information-variant-circle" className="size-full" />,
     },
   ],
   themes: [
@@ -103,7 +99,7 @@ export const siteConfig: SiteConfigType = {
     },
     {
       name: "system",
-      icon: <HiComputerDesktop className="size-full" />,
+      icon: <HiSparkles className="size-full" />,
     },
   ],
   queryLists: {
@@ -185,7 +181,7 @@ export const siteConfig: SiteConfigType = {
     ],
   },
   socials: {
-    github: "https://github.com/sashendev/SASHFLIX",
+    github: "#",
   },
 };
 
