@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![SASHFLIX Preview](https://raw.githubusercontent.com/sashendev/SASHFLIX/public/mockup.png)
+![SASHFLIX Preview](https://github.com/sashendev/SASHFLIX/blob/main/public/mockup.png?raw=true)
 
 **A modern, open-source streaming platform built for discovering and enjoying movies & TV shows.**
 
