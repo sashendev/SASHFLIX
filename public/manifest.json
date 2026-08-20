@@ -4,7 +4,7 @@
   "description": "Your only choice for a free movies and TV shows streaming website.",
   "start_url": "/",
   "display": "standalone",
-  "orientation": "portrait",
+  "orientation": "any",
   "theme_color": "#0D0C0F",
   "background_color": "#0D0C0F",
   "lang": "en-US",
