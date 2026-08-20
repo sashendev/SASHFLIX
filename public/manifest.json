@@ -1,6 +1,6 @@
 {
-  "name": "SASHFLIX",
-  "short_name": "SASHFLIX",
+  "name": "Sashflix",
+  "short_name": "Sashflix",
   "description": "Your only choice for a free movies and TV shows streaming website.",
   "start_url": "/",
   "display": "standalone",
