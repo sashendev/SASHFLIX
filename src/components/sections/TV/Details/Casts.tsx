@@ -5,6 +5,7 @@ import { Cast } from "tmdb-ts";
 import { getImageUrl } from "@/utils/movies";
 import Carousel from "@/components/ui/wrapper/Carousel";
 import SectionTitle from "@/components/ui/other/SectionTitle";
+import Link from "next/link";
 
 interface CastCardProps {
   casts: Cast[];
@@ -15,10 +16,15 @@ const TvShowCastsSection: React.FC<CastCardProps> = ({ casts }) => {
     <section id="casts" className="z-3 flex flex-col gap-2">
       <SectionTitle color="warning">Top Casts</SectionTitle>
       <Carousel classNames={{ container: "gap-5" }}>
-        {casts.map((cast, index) => {
+        {casts.map((cast) => {
           const avatar = getImageUrl(cast.profile_path, "avatar");
           return (
-            <div key={index} className="flex max-w-fit items-center px-1 py-2">
+            <Link
+              key={cast.id}
+              href={`/person/${cast.id}`}
+              className="flex max-w-fit items-center rounded-medium px-1 py-2 transition-opacity hover:opacity-80"
+              aria-label={`View movies featuring ${cast.name}`}
+            >
               <User
                 name={cast.name}
                 description={cast.character}
@@ -29,7 +35,7 @@ const TvShowCastsSection: React.FC<CastCardProps> = ({ casts }) => {
                   isBordered: true,
                 }}
               />
-            </div>
+            </Link>
           );
         })}
       </Carousel>

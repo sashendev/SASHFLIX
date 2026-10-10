@@ -1,16 +1,15 @@
 "use client";
 
-import { getSearchSuggestions } from "@/actions/search";
+import { getSearchSuggestions, SearchMode } from "@/actions/search";
 import SearchInput from "@/components/ui/input/SearchInput";
-import ContentTypeSelection from "@/components/ui/other/ContentTypeSelection";
 import Highlight from "@/components/ui/other/Highlight";
 import useBreakpoints from "@/hooks/useBreakpoints";
-import useDiscoverFilters from "@/hooks/useDiscoverFilters";
 import { SEARCH_HISTORY_STORAGE_KEY } from "@/utils/constants";
 import { cn, isEmpty } from "@/utils/helpers";
 import { ArrowUpLeft, Close, History, Movie, Search, TV } from "@/utils/icons";
+import { Icon } from "@iconify/react";
 import { useRouter } from "@bprogress/next/app";
-import { Button, Listbox, ListboxItem } from "@heroui/react";
+import { Button, Listbox, ListboxItem, Tab, Tabs } from "@heroui/react";
 import { useDebouncedValue, useLocalStorage } from "@mantine/hooks";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { AnimatePresence, motion } from "framer-motion";
@@ -20,12 +19,19 @@ import { useCallback, useState } from "react";
 interface SearchFilterProps extends React.HTMLAttributes<HTMLFormElement> {
   isLoading?: boolean;
   onSearchSubmit?: (value: string) => void;
+  mode: SearchMode;
+  onModeChange: (mode: SearchMode) => void;
 }
 
-const SearchFilter: React.FC<SearchFilterProps> = ({ isLoading, onSearchSubmit, ...props }) => {
+const SearchFilter: React.FC<SearchFilterProps> = ({
+  isLoading,
+  onSearchSubmit,
+  mode,
+  onModeChange,
+  ...props
+}) => {
   const router = useRouter();
   const { mobile } = useBreakpoints();
-  const { content } = useDiscoverFilters();
   const [triggered, setTriggered] = useState(false);
   const [searchQuery, setSearchQuery] = useQueryState("q", parseAsString.withDefault(""));
   const [debouncedSearchQuery] = useDebouncedValue(searchQuery, 300);
@@ -36,8 +42,8 @@ const SearchFilter: React.FC<SearchFilterProps> = ({ isLoading, onSearchSubmit, 
   const enableFetch = debouncedSearchQuery.length > 3 && !isLoading && !triggered;
   const { data, isFetching } = useQuery({
     enabled: enableFetch,
-    queryKey: ["search-suggestions", debouncedSearchQuery],
-    queryFn: async () => await getSearchSuggestions(debouncedSearchQuery),
+    queryKey: ["search-suggestions", mode, debouncedSearchQuery],
+    queryFn: async () => await getSearchSuggestions(debouncedSearchQuery, 10, mode),
     placeholderData: keepPreviousData,
     staleTime: 1000 * 60 * 5,
   });
@@ -57,14 +63,14 @@ const SearchFilter: React.FC<SearchFilterProps> = ({ isLoading, onSearchSubmit, 
         setSearchHistories(newHistories);
       }
     },
-    [searchQuery, searchHistories],
+    [onSearchSubmit, searchQuery, searchHistories, setSearchHistories],
   );
 
   const handleClear = useCallback(() => {
     setSearchQuery("");
     setTriggered(false);
     onSearchSubmit?.("");
-  }, []);
+  }, [onSearchSubmit, setSearchQuery]);
 
   return (
     <form
@@ -74,12 +80,29 @@ const SearchFilter: React.FC<SearchFilterProps> = ({ isLoading, onSearchSubmit, 
       })}
       {...props}
     >
-      <ContentTypeSelection className="justify-center" />
+      <Tabs
+        selectedKey={mode}
+        onSelectionChange={(key) => {
+          const nextMode = key as SearchMode;
+          onModeChange(nextMode);
+          setTriggered(false);
+        }}
+        aria-label="Search movies, TV, or cast"
+        className="justify-center"
+        variant="underlined"
+      >
+        <Tab key="titles" title="Movies & TV" />
+        <Tab key="people" title="Cast" />
+      </Tabs>
       <div className="relative flex flex-col gap-2">
         <div className="flex items-center justify-center gap-2">
           <SearchInput
             autoFocus
-            placeholder={`Search your favorite ${content === "movie" ? "movies" : "TV shows"}...`}
+            placeholder={
+              mode === "people"
+                ? "Search cast member names..."
+                : "Search movies and TV shows..."
+            }
             isLoading={isLoading}
             value={searchQuery}
             onValueChange={(val) => {
@@ -102,7 +125,7 @@ const SearchFilter: React.FC<SearchFilterProps> = ({ isLoading, onSearchSubmit, 
                   type="submit"
                   radius="full"
                   variant="flat"
-                  color={content === "movie" ? "primary" : "warning"}
+                  color="primary"
                 >
                   {mobile ? <Search /> : "Search"}
                 </Button>
@@ -165,7 +188,11 @@ const SearchFilter: React.FC<SearchFilterProps> = ({ isLoading, onSearchSubmit, 
                           type === "movie" ? (
                             <Movie className="text-primary" />
                           ) : (
-                            <TV className="text-warning" />
+                            type === "tv" ? (
+                              <TV className="text-warning" />
+                            ) : (
+                              <Icon icon="mdi:account" className="text-success" />
+                            )
                           )
                         }
                         endContent={
@@ -181,7 +208,9 @@ const SearchFilter: React.FC<SearchFilterProps> = ({ isLoading, onSearchSubmit, 
                             <ArrowUpLeft size={20} />
                           </Button>
                         }
-                        onPress={() => router.push(`/${type}/${id}`)}
+                        onPress={() =>
+                          router.push(type === "person" ? `/person/${id}` : `/${type}/${id}`)
+                        }
                       >
                         <Highlight markType="bold" highlight={debouncedSearchQuery}>
                           {title}
