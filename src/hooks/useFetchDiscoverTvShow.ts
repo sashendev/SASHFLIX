@@ -8,14 +8,21 @@ interface FetchDiscoverTvShows {
   page?: number;
   type?: DiscoverTvShowsFetchQueryType;
   genres?: string;
+  language?: string;
 }
 
 const fetchDiscoverTvShows = ({
   page = 1,
   type = "discover",
   genres,
+  language,
 }: FetchDiscoverTvShows): Promise<TvShowDiscoverResult> => {
-  const discover = () => tmdb.discover.tvShow({ page: page, with_genres: genres });
+  const discover = () =>
+    tmdb.discover.tvShow({
+      page: page,
+      with_genres: genres,
+      with_original_language: language,
+    });
   const todayTrending = () => tmdb.trending.trending("tv", "day", { page: page });
   const thisWeekTrending = () => tmdb.trending.trending("tv", "week", { page: page });
   const popular = () => tmdb.tvShows.popular({ page: page });

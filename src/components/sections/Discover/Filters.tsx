@@ -1,11 +1,12 @@
 import GenresSelect from "@/components/ui/input/GenresSelect";
+import LanguageSelect from "@/components/ui/input/LanguageSelect";
 import ContentTypeSelection from "@/components/ui/other/ContentTypeSelection";
 import useDiscoverFilters from "@/hooks/useDiscoverFilters";
 import { DiscoverMoviesFetchQueryType } from "@/types/movie";
 import { Select, SelectItem, Button } from "@heroui/react";
 
 const DiscoverFilters = () => {
-  const { types, content, genres, queryType, setQueryType, setGenres, resetFilters } =
+  const { types, content, genres, language, queryType, setQueryType, setGenres, setLanguage, resetFilters } =
     useDiscoverFilters();
 
   return (
@@ -35,6 +36,13 @@ const DiscoverFilters = () => {
           selectedKeys={genres}
           onGenreChange={(genres) => {
             setGenres(genres);
+            setQueryType("discover");
+          }}
+        />
+        <LanguageSelect
+          selectedKeys={language ? [language] : []}
+          onLanguageChange={(language) => {
+            setLanguage(language ?? "");
             setQueryType("discover");
           }}
         />

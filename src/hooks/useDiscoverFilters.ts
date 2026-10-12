@@ -2,7 +2,7 @@ import { queryClient as q } from "@/app/providers";
 import { siteConfig } from "@/config/site";
 import { DISCOVER_MOVIES_VALID_QUERY_TYPES, DISCOVER_TVS_VALID_QUERY_TYPES } from "@/types/movie";
 import { parseAsSet } from "@/utils/parsers";
-import { useQueryState, parseAsStringLiteral } from "nuqs";
+import { useQueryState, parseAsStringLiteral, parseAsString } from "nuqs";
 import { useCallback, useMemo, useEffect } from "react";
 
 const VALID_CONTENT_TYPES = ["movie", "tv"] as const;
@@ -12,6 +12,7 @@ const useDiscoverFilters = () => {
   const { movies, tvShows } = siteConfig.queryLists;
 
   const [genres, setGenres] = useQueryState("genres", parseAsSet.withDefault(new Set([])));
+  const [language, setLanguage] = useQueryState("language", parseAsString.withDefault(""));
   const [queryType, setQueryType] = useQueryState(
     "type",
     parseAsStringLiteral([
@@ -45,8 +46,9 @@ const useDiscoverFilters = () => {
 
   const resetFilters = useCallback(() => {
     setGenres(null);
+    setLanguage("");
     setQueryType(DEFAULT_QUERY_TYPE);
-  }, [setGenres, setQueryType]);
+  }, [setGenres, setLanguage, setQueryType]);
 
   const clearQueries = useCallback(() => {
     const queryKeys = ["discover-movies", "discover-tv-shows"];
@@ -55,19 +57,21 @@ const useDiscoverFilters = () => {
         q.removeQueries({ queryKey: [key] });
       }
     });
-  }, [q]);
+  }, []);
 
   useEffect(() => {
     clearQueries();
-  }, [content, queryType, genresString]);
+  }, [content, queryType, genresString, language, clearQueries]);
 
   return {
     types,
     genres,
+    language,
     queryType,
     content,
     genresString,
     setGenres,
+    setLanguage,
     setQueryType,
     setContent,
     resetFilters,

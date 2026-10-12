@@ -8,14 +8,21 @@ interface FetchDiscoverMovies {
   page?: number;
   type?: DiscoverMoviesFetchQueryType;
   genres?: string;
+  language?: string;
 }
 
 const fetchDiscoverMovies = ({
   page = 1,
   type = "discover",
   genres,
+  language,
 }: FetchDiscoverMovies): Promise<MovieDiscoverResult> => {
-  const discover = () => tmdb.discover.movie({ page: page, with_genres: genres });
+  const discover = () =>
+    tmdb.discover.movie({
+      page: page,
+      with_genres: genres,
+      with_original_language: language,
+    });
   const todayTrending = () => tmdb.trending.trending("movie", "day", { page: page });
   const thisWeekTrending = () => tmdb.trending.trending("movie", "week", { page: page });
   const popular = () => tmdb.movies.popular({ page: page });

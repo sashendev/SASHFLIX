@@ -16,15 +16,16 @@ import TvShowPosterCard from "../TV/Cards/Poster";
 
 const TvShowDiscoverList = () => {
   const { ref, inViewport } = useInViewport();
-  const { genresString, queryType } = useDiscoverFilters();
+  const { genresString, queryType, language } = useDiscoverFilters();
   const { data, isPending, status, fetchNextPage, isFetchingNextPage, hasNextPage } =
     useInfiniteQuery({
-      queryKey: ["discover-tv-shows", queryType, genresString],
+      queryKey: ["discover-tv-shows", queryType, genresString, language],
       queryFn: ({ pageParam }) =>
         fetchDiscoverTvShows({
           page: pageParam,
           type: queryType as DiscoverTvShowsFetchQueryType,
           genres: genresString,
+          language,
         }),
       initialPageParam: 1,
       getNextPageParam: (lastPage) =>
